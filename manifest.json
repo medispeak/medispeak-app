@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "medispeak-crx",
+    "version": "1.0.0",
+    "action": {
+        "default_popup": "index.html"
+    },
+    "permissions": [
+        "tabs"
+    ],
+    "content_scripts": [
+        {
+            "js": [
+                "src/content.jsx"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
+}
