@@ -6,67 +6,25 @@ import { triggerScan, triggerUpdateFields } from '../utils/ScanUtils';
 
 
 const uploadAudio = (audioFile, callback) => {
-    const formData = new FormData();
-    formData.append('transcription[audio_file]', audioFile);
-
-    // Add Auth Token
-    const headers = new Headers();
-    const authToken = "Bearer Zakpzw9JjgjZXrTh5ePpgqnk"
-    headers.append("Authorization", authToken);
-
-    const requestOptions = {
-        method: 'POST',
-        headers: headers,
-        body: formData,
-        redirect: 'follow'
-    };
-
-    fetch("https://www.medispeak.in/api/v1/pages/4/transcriptions", requestOptions)
-        .then(response => response.json())
-        .then(result => {
-            console.log(result);
-            if (callback) callback(result.transcription_text);
-        })
+    transcribeAudio(page, [
+        { name: "transcription[audio_file]", data: audioFile }
+    ]).then(result => {
+        console.log(result);
+        if (callback) callback(result);
+    })
         .catch(error => console.log('error', error));
 }
 
+
 const populateFields = (fields, transcription) => {
-    console.log("Populating fields", fields, transcription)
-    const namedFields = fields.filter(field => field.identifier || field.id);
-    const fieldsToFill = namedFields.filter(field => transcription.includes(field.identifier));
-    console.log("Fields to fill", fieldsToFill)
+    getCompletion(transcription)
+        .then(result => {
+            console.log(result);
+        }).catch(error => console.log('error', error));
 
-    const updatedFields = fieldsToFill.map((field, _index, _fields) => {
-        console.log("Updating field", field, _index, _fields)
-        const fieldTextPostFix = transcription.split(field.identifier)[1];
-        console.log("Field text postfix", fieldTextPostFix)
-        // Find the first hit of another field name in the transcription
-        const filter = _fields
-            .filter(f => f !== field)
-        console.log("Filter", filter)
-        const map = filter
-            .map(f => ({ identifier: f.identifier, index: fieldTextPostFix.indexOf(f.identifier) }))
-        console.log("Map", map)
-        // Remove the -1 index | No match
-        const filter2 = map
-            .filter(f => f.index !== -1)
-        const sort = filter2
-            .sort((a, b) => a.index - b.index);
-        console.log("Sort", sort)
-        const postfixField = sort[0]?.identifier || '';
-        console.log("Postfix field", postfixField)
-        const fieldText =
-            postfixField === '' ? fieldTextPostFix : fieldTextPostFix.split(postfixField)[0];
-        console.log("Field text", fieldText)
-        return {
-            ...field,
-            value: fieldText
-        }
-    });
+    // triggerUpdateFields(updatedFields);
 
-    triggerUpdateFields(updatedFields);
-
-    return updatedFields;
+    return fields;
 }
 
 export default function PopOver() {
@@ -85,7 +43,7 @@ export default function PopOver() {
             setFields(fields =>
                 populateFields(
                     fields.map(field => ({ ...field, value: '', name: field.identifier.toLowerCase() })),
-                    transcription.toLowerCase()
+                    transcription.transcription_text.toLowerCase()
                 )
             );
         }
@@ -125,7 +83,7 @@ export default function PopOver() {
                                     <span> Transcription Preview </span>
                                     <textarea
                                         className="tw-w-full tw-h-full tw-p-2 tw-border-0 tw-text-sm"
-                                        value={transcription}
+                                        value={transcription.transcription_text}
                                         readOnly
                                     />
                                     {/* Retry */}
@@ -133,7 +91,7 @@ export default function PopOver() {
                                         onClick={() => {
                                             triggerUpdateFields(fields);
                                         }}
-                                        className="tw-flex tw-items-center tw-space-x-4 tw-px-2 tw-py-2 tw-bg-blue-600 tw-text-white tw-rounded-xl tw-cursor-pointer hover:tw-bg-blue-700"
+                                        className="tw-button tw-flex tw-items-center tw-space-x-4 tw-px-2 tw-py-2 tw-bg-blue-600 tw-text-white tw-rounded-xl tw-cursor-pointer hover:tw-bg-blue-700"
                                     >
                                         <TranscribeIcon className="tw-h-6 tw-w-6 tw-flex-none tw-rounded-xl tw-cursor-pointer" />
                                         Retry
@@ -148,7 +106,7 @@ export default function PopOver() {
                                         onClick={() => {
                                             uploadAudio(recording, setTranscription);
                                         }}
-                                        className="tw-flex tw-items-center tw-space-x-4 tw-px-2 tw-py-2 tw-bg-blue-600 tw-text-white tw-rounded-xl tw-cursor-pointer hover:tw-bg-blue-700"
+                                        className="tw-button tw-flex tw-items-center tw-space-x-4 tw-px-2 tw-py-2 tw-bg-blue-600 tw-text-white tw-rounded-xl tw-cursor-pointer hover:tw-bg-blue-700"
                                     >
                                         <TranscribeIcon className="tw-h-6 tw-w-6 tw-flex-none tw-rounded-xl tw-cursor-pointer" />
                                         Start

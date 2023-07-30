@@ -19,14 +19,14 @@ function App() {
       )}
       <div className="tw-flex tw-justify-end">
         <button
-          className="tw-bg-blue-600 tw-relative tw-rounded-full tw-transition tw-w-14 tw-h-14 md:t-w-16 md:t-h-16 tw-my-2 md:t-my-3 tw-mx-2 tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-shadow-xl tw-text-white "
+          className="tw-button tw-bg-blue-600 tw-relative tw-rounded-full tw-transition tw-w-14 tw-h-14 md:t-w-16 md:t-h-16 tw-my-2 md:t-my-3 tw-mx-2 tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-shadow-xl tw-text-white "
           onClick={() => setShowPopOver(!showPopOver)}
         >
           <span
-            className={"tw-absolute tw-inline-flex tw-h-full tw-w-full tw-rounded-full tw-bg-blue-400 tw-opacity-20 md:t-opacity-50 tw-z-10 " +
-              (firstLoad ? "tw-animate-ping" : "")}
+            className={"tw-absolute tw-inline-flex tw-h-full tw-w-full tw-rounded-full tw-bg-blue-400 tw-z-10 " +
+              (firstLoad ? "" : "")}
           ></span>
-          <MediSpeakIcon />
+          <MediSpeakIcon className="text-white h-6 w-6" />
         </button>
       </div>
     </>

@@ -58,7 +58,7 @@ export default function Player({ onRecordingReady }) {
                             startRecording();
                         }
                     }}
-                    className="tw-flex tw-items-center tw-space-x-4 tw-pr-2 tw-pl-4 tw-py-2"
+                    className="tw-button tw-flex tw-items-center tw-space-x-4 tw-pr-2 tw-pl-4 tw-py-2"
                 >
                     {
                         isRecording ? (
@@ -70,7 +70,7 @@ export default function Player({ onRecordingReady }) {
                 </button>
                 <button
                     onClick={togglePauseResume}
-                    className="tw-flex tw-items-center tw-space-x-4 tw-px-2 tw-py-2"
+                    className="tw-button tw-flex tw-items-center tw-space-x-4 tw-px-2 tw-py-2"
                 >
                     {
                         isPaused ? (
@@ -86,7 +86,7 @@ export default function Player({ onRecordingReady }) {
                             previewPlayerRef.current.play();
                         }
                     }}
-                    className="tw-flex tw-items-center tw-space-x-4 tw-px-2 tw-py-2"
+                    className="tw-button tw-flex tw-items-center tw-space-x-4 tw-px-2 tw-py-2"
                 >
                     <PlayIcon className={
                         audioSrc

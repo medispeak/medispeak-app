@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 const config = {
-  mode: 'jit',
+  mode: "jit",
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -10,12 +10,16 @@ const config = {
   theme: {
     extend: {},
   },
-  prefix: 'tw-',
+  prefix: "tw-",
   plugins: [],
-  safelist: [{
-    pattern: /./ 
-  }]
-}
+  safelist: [
+    {
+      pattern: /./,
+    },
+  ],
+  corePlugins: {
+    preflight: false,
+  },
+};
 
 export default config;
-

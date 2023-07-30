@@ -1,3 +1,8 @@
 @tailwind base;
+
+.tw-button {
+  @apply tw-bg-transparent tw-border-none
+}
+
 @tailwind components;
 @tailwind utilities;
