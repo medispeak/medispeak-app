@@ -6,8 +6,12 @@
         "default_popup": "index.html"
     },
     "permissions": [
-        "tabs"
+        "tabs",
+        "storage"
     ],
+    "background": {
+        "service_worker": "src/service-worker.js"
+    },
     "content_scripts": [
         {
             "js": [

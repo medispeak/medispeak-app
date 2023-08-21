@@ -50,7 +50,7 @@ export default function Player({ onRecordingReady }) {
     return (
         <div className="tw-relative tw-z-10">
             <div className="tw-flex w-full tw-bg-white tw-ring-1 tw-ring-slate-700/10">
-                <button
+                <div
                     onClick={() => {
                         if (isRecording) {
                             stopRecording();
@@ -67,8 +67,8 @@ export default function Player({ onRecordingReady }) {
                             <RecordIcon className="tw-h-6 tw-w-6 tw-flex-none tw-text-red-600 tw-rounded-xl tw-cursor-pointer hover:tw-text-red-800" />
                         )
                     }
-                </button>
-                <button
+                </div>
+                <div
                     onClick={togglePauseResume}
                     className="tw-button tw-flex tw-items-center tw-space-x-4 tw-px-2 tw-py-2"
                 >
@@ -79,8 +79,8 @@ export default function Player({ onRecordingReady }) {
                             <PauseIcon className="tw-h-6 tw-w-6 tw-flex-none tw-text-gray-600 tw-rounded-xl tw-cursor-pointer hover:tw-text-gray-800" />
                         )
                     }
-                </button>
-                <button
+                </div>
+                <div
                     onClick={() => {
                         if (audioSrc) {
                             previewPlayerRef.current.play();
@@ -93,7 +93,7 @@ export default function Player({ onRecordingReady }) {
                             ? "tw-h-6 tw-w-6 tw-flex-none tw-text-gray-600 tw-rounded-xl tw-cursor-pointer hover:tw-text-gray-800"
                             : "tw-h-6 tw-w-6 tw-flex-none tw-text-gray-600 tw-rounded-xl tw-cursor-not-allowed tw-opacity-50"
                     } />
-                </button>
+                </div>
                 <audio
                     ref={previewPlayerRef}
                     src={audioSrc}

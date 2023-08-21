@@ -24,8 +24,11 @@ export const triggerUpdateFields = (updateFields) => {
       field.value
     );
     // Check if `message.fields` has a field with the same name as `field.name`
+
+    console.log("New Compare");
+
     const matchingField = updateFields.find(
-      (f) => f.name === field.name || f.id === field.id
+      (f) => compare(f.name, field.name) || compare(f.id, field.id)
     );
     if (matchingField) {
       // Update the field value to the value from `message.fields`
@@ -35,4 +38,17 @@ export const triggerUpdateFields = (updateFields) => {
       field.dispatchEvent(event);
     }
   });
+};
+
+const compare = (a, b) => {
+  if (a === "" || a === undefined || a === null) {
+    return false;
+  }
+  if (b === "" || b === undefined || b === null) {
+    return false;
+  }
+  if (a === b) {
+    return true;
+  }
+  return false;
 };

@@ -38,7 +38,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 const root = document.createElement("div");
-root.className = "tw-container tw-fixed tw-bottom-0 tw-right-0 tw-flex tw-flex-col tw-max-w-sm tw-px-2 tw-z-40 tw-w-full";
 document.body.appendChild(root);
 
 ReactDOM.createRoot(root).render(
