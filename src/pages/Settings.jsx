@@ -19,7 +19,7 @@ export default function Settings() {
 
     useEffect(() => {
         // Get Access Key from `localStorage`
-        const localAccessKey = localStorage.getItem("acces_token");
+        const localAccessKey = localStorage?.getItem("access_token");
         if (localAccessKey) {
             setAccessKey(localAccessKey);
         }
