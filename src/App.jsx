@@ -15,7 +15,7 @@ function App() {
   const widthClasses = showPopOver ? "tw-w-full tw-max-w-sm" : "tw-w-24";
 
   return (
-    <div className={`tw-container tw-fixed tw-bottom-0 tw-right-0 tw-flex tw-flex-col tw-px-2 tw-z-40 ${widthClasses}`}>
+    <div className={`tw-container tw-fixed tw-bottom-0 tw-right-0 tw-flex tw-flex-col tw-px-2 tw-z-40 tw-font-sans ${widthClasses}`}>
       {showPopOver && (
         <AppRouter />
       )}
