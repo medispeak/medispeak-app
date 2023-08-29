@@ -7,10 +7,6 @@ import { triggerScan, triggerUpdateFields } from '../utils/ScanUtils';
 import { transcribeAudio, getCompletion, getPageInfo, getPages } from '../api/Api';
 import { useRoute } from './AppRouter';
 
-const BAHMNI_APP_ID = 3;
-
-const BHAMNI_PAGE = 4;
-
 const uploadAudio = (audioFile, callback) => {
     const page = BHAMNI_PAGE;
     transcribeAudio([{ name: "transcription[audio_file]", value: audioFile }], page)
@@ -30,6 +26,13 @@ const populateFields = (transcription, callback) => {
         }).catch(error => console.log('error', error));
 }
 
+const fetchPages = (callback) => {
+    getPages()
+        .then(result => {
+            console.log(result);
+            if (callback) callback(result);
+        }).catch(error => console.log('error', error));
+}
 
 const fetchPageInfo = (page, callback) => {
     getPageInfo(page)
@@ -63,17 +66,35 @@ export default function Home() {
 
     // Current URL
     const url = window.location.href;
+    const fqdn = url.split("/")[2];
+    // fqdn Override
+    // const fqdn = "care.ohc.network";
 
     const [recording, setRecording] = useState(false);
     const [transcription, setTranscription] = useState(null);
     const [fields, setFields] = useState([]);
+    const [pages, setPages] = useState();
     const [pageData, setPageData] = useState();
     const [autofillData, setAutofillData] = useState();
 
     const { navigate } = useRoute();
 
     useEffect(() => {
-        fetchPageInfo(BAHMNI_APP_ID, setPageData);
+        const shortlistPage = (webapps) => {
+            const webapp = webapps.find(page => page.fqdn === fqdn);
+            if (webapp) {
+                if (webapp.pages.length === 1) {
+                    setPageData(webapp.pages[0]);
+                } else {
+                    setPages(webapp.pages);
+                }
+            } else {
+                console.log("No page found for", fqdn);
+                setPages(null);
+            }
+        }
+        fetchPages(shortlistPage);
+        // fetchPageInfo(BAHMNI_APP_ID, setPageData);
         triggerScan(setFields);
     }, []);
 
@@ -87,12 +108,14 @@ export default function Home() {
         }
     }, [transcription]);
 
+    const title = pageData ? pageData.title : "Select Page";
+
     return (
         <div className="tw-flex tw-h-full tw-flex-col tw-justify-between">
             <div>
                 {/* Title & Page Title*/}
                 <div className="tw-flex tw-justify-between tw-items-center tw-mx-4 tw-my-2">
-                    <span className="tw-text-base tw-font-bold tw-blue-800">Create Patient</span>
+                    <span className="tw-text-base tw-font-bold tw-blue-800">{title}</span>
                     <span className="tw-text-sm tw-font-semibold tw-flex tw-gap-2 tw-items-center">
                         MediSpeak
                         <button
@@ -105,19 +128,79 @@ export default function Home() {
 
                 {/* Divider */}
                 <div className="tw-bg-gray-800 tw-mx-4 tw-my-2 tw-h-1"></div>
-
-                {/* Page Title */}
-                <h5 className="tw-text-sm tw-font-semibold tw-mx-4 tw-my-2 tw-text-gray-800">
-                    Auto-filled Fields
-                </h5>
-                {/* Autofilled Fields */}
-                <div className="tw-px-4 tw-flex tw-flex-wrap tw-flex-shrink tw-gap-y-1 tw-items-start tw-max-h-48 tw-overflow-auto">
-                    {
-                        pageData?.form_fields?.map(field => (
-                            <Badge key={field.title} text={field.title} />
-                        )) || <span className="tw-text-sm tw-font-semibold tw-mx-4 tw-my-2 tw-text-gray-800">No fields found</span>
-                    }
-                </div>
+                {/* When a Page is not yet selected, Show the List of Pages Available in the WebApp */}
+                {!pageData ? (
+                    pages === null ? (
+                        // When the WebApp is not yet setup in the MediSpeak account
+                        <div className="tw-flex tw-flex-col tw-gap-4 tw-justify-center tw-items-center tw-h-1/2 tw-p-4">
+                            <span>
+                                This WebApp is not yet setup in your MediSpeak account
+                            </span>
+                            <span>
+                                You can setup {fqdn} as a WebApp at <a href="https://medispeak.in" target="_blank" rel="noreferrer" className="tw-text-blue-600 tw-underline">https://medispeak.in</a>
+                            </span>
+                        </div>
+                    ) : pages ? (
+                        // When the WebApp is setup in the MediSpeak account but no Pages are setup
+                        pages.length === 0 ? (
+                            <div className="tw-flex tw-flex-col tw-gap-4 tw-justify-center tw-items-center tw-h-1/2 tw-p-4">
+                                <span>
+                                    No Pages found for this WebApp
+                                </span>
+                                <p>
+                                    You can setup <span className="tw-font-semibold">Pages</span> for the WebApp {fqdn} at <a href="https://medispeak.in" target="_blank" rel="noreferrer" className="tw-text-blue-600 tw-underline">https://medispeak.in</a>
+                                </p>
+                            </div>
+                        ) : (
+                            // When the WebApp is setup in the MediSpeak account and Pages are setup
+                            // Select a Page to continue
+                            <div className="tw-flex tw-flex-col tw-gap-4 tw-mx-4 tw-my-2">
+                                <div className="tw-flex tw-flex-col tw-gap-2">
+                                    <span className="tw-text-sm tw-font-semibold tw-text-gray-800">Select Page</span>
+                                    {/* List of Pages */}
+                                    <div className="tw-flex tw-flex-col tw-gap-2">
+                                        {
+                                            pages?.map(page => (
+                                                <span
+                                                    key={page.id}
+                                                    onClick={() => setPageData(page)}
+                                                    className="tw-text-xs tw-font-semibold tw-text-gray-800 tw-cursor-pointer hover:tw-text-blue-600"
+                                                >
+                                                    {page.title}
+                                                </span>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    ) : (
+                        // pages === undefined || Loading Data from your MediSpeak Account
+                        <div className="tw-flex tw-justify-center tw-items-center tw-h-1/2 tw-p-4">
+                            <span>
+                                Loading Data from your MediSpeak Account
+                            </span>
+                        </div>
+                    )
+                ) :
+                    (
+                        // When a Page is Selected, Show the Autofilled Fields
+                        <>
+                            {/* Page Title */}
+                            <h5 className="tw-text-sm tw-font-semibold tw-mx-4 tw-my-2 tw-text-gray-800">
+                                Auto-filled Fields
+                            </h5>
+                            {/* Autofilled Fields */}
+                            <div className="tw-px-4 tw-flex tw-flex-wrap tw-flex-shrink tw-gap-y-1 tw-items-start tw-max-h-48 tw-overflow-auto">
+                                {
+                                    pageData?.form_fields?.map(field => (
+                                        <Badge key={field.title} text={field.title} />
+                                    )) || <span className="tw-text-sm tw-font-semibold tw-mx-4 tw-my-2 tw-text-gray-800">No fields found</span>
+                                }
+                            </div>
+                        </>
+                    )
+                }
             </div>
 
             {/* Transcription Controls */}
