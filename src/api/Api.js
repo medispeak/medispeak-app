@@ -3,16 +3,10 @@ import { authAtom } from "../store/AuthStore";
 
 const BASE_URL = "https://www.medispeak.in/";
 
-export function request(
-  url,
-  method = "GET",
-  data,
-  authToken = "Zakpzw9JjgjZXrTh5ePpgqnk"
-) {
-  console.log("Requesting", url, "with", data);
+export function request(url, method = "GET", data) {
+  const authToken = sessionStorage.getItem("access_token");
   const formData = new FormData();
   if (data) {
-    console.log("Appending data", data);
     data.forEach((field) => {
       formData.append(field.name, field.value);
     });
@@ -56,16 +50,6 @@ export function request(
   );
 }
 
-// Needs to be
-// export function useApi() {
-//   const accessKey = useAtom(authAtom);
-//   return {
-//     transcribeAudio: (data, page) => {
-//       const url = `${BASE_URL}api/v1/pages/${page}/transcriptions`;
-//       return requestPost(url, data, accessKey);
-//   }
-// }
-
 const requestPost = (url, data, authToken) => {
   return request(url, "POST", data, authToken);
 };
@@ -95,7 +79,7 @@ export function getPages() {
 }
 
 export function getCurrentUser() {
-  // https://www.medispeak.in/api/v1/users/me
-  const url = `${BASE_URL}api/v1/users/me`;
+  // https://www.medispeak.in/api/v1/me
+  const url = `${BASE_URL}api/v1/me`;
   return request(url);
 }

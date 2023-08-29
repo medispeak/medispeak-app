@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react";
 import { ExitIcon } from "../components/common/AppIcons";
 import { useRoute } from "./AppRouter";
+import { useAuthActions } from "../store/AuthStore";
 
 // Save Access Key to `localStorage`
-const saveAccessKey = (accessKey) => {
-    localStorage.setItem("accessKey", accessKey);
+const saveAccessKey = (accessKey, callback) => {
+    localStorage.setItem("access_token", accessKey);
+    callback();
 }
 
 export default function Settings() {
 
     const { navigate } = useRoute();
+    const { refresh } = useAuthActions();
 
     // State for Access Key
     const [accessKey, setAccessKey] = useState("");
 
     useEffect(() => {
         // Get Access Key from `localStorage`
-        const localAccessKey = localStorage.getItem("accessKey");
+        const localAccessKey = localStorage.getItem("acces_token");
         if (localAccessKey) {
             setAccessKey(localAccessKey);
         }
@@ -63,7 +66,7 @@ export default function Settings() {
             </div>
             <div className="tw-flex tw-justify-center tw-items-center tw-mx-4 tw-my-2">
                 <button
-                    onClick={() => saveAccessKey(accessKey)}
+                    onClick={() => saveAccessKey(accessKey, refresh)}
                     className="tw-bg-blue-600 tw-text-white tw-rounded-lg tw-py-2 tw-px-4 tw-text-sm tw-font-semibold">
                     Save
                 </button>

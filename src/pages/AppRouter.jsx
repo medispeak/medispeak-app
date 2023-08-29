@@ -1,8 +1,14 @@
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import Home from "./Home";
 import AppContainer from "../components/AppContainer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Settings from "./Settings";
+import { authAtom, useAuthActions } from "../store/AuthStore";
+
+const publicRoutes = {
+    settings: () => <Settings />,
+    "": () => <Settings />
+}
 
 const routes = {
     home: () => <Home />,
@@ -11,13 +17,13 @@ const routes = {
     "": () => <Home />
 }
 
-const computeRoute = (route) => {
-    const matchedRoute = routes[route];
+const computeRoute = (route, allowedRoutes) => {
+    const matchedRoute = allowedRoutes[route];
     if (matchedRoute) {
         return matchedRoute();
     }
 
-    const defaultRoute = routes[""];
+    const defaultRoute = allowedRoutes[""];
 
     return defaultRoute();
 }
@@ -33,12 +39,22 @@ export const useRoute = () => {
 
 export default function AppRouter() {
 
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const auth = useAtomValue(authAtom);
     const route = useAtomValue(routeAtom)
+
+    const { refresh } = useAuthActions();
+
+    useEffect(() => {
+        refresh();
+    }, []);
+
+    const isAuthenticated = auth.user !== null;
+
+    const allowedRoutes = isAuthenticated ? routes : publicRoutes;
 
     return (
         <AppContainer>
-            {computeRoute(route)}
+            {computeRoute(route, allowedRoutes)}
         </AppContainer>
     )
 }
