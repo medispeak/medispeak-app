@@ -116,14 +116,14 @@ export default function Home() {
                 {/* Title & Page Title*/}
                 <div className="tw-flex tw-justify-between tw-items-center tw-mx-4 tw-my-2">
                     <span className="tw-text-base tw-font-bold tw-blue-800">{title}</span>
-                    <span className="tw-text-sm tw-font-semibold tw-flex tw-gap-2 tw-items-center">
-                        MediSpeak
+                    <div className="tw-text-sm tw-font-semibold tw-flex tw-gap-2 tw-items-center">
+                        MediSpeak <span className="tw-text-xs tw-italic tw-text-gray-600">v0.1</span>
                         <button
                             onClick={() => navigate('settings')}
                         >
                             <SettingsIcon className="tw-h-4 tw-w-4 tw-flex-none tw-rounded-xl tw-cursor-pointer" />
                         </button>
-                    </span>
+                    </div>
                 </div>
 
                 {/* Divider */}
