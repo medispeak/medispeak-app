@@ -7,8 +7,8 @@ import { triggerScan, triggerUpdateFields } from '../utils/ScanUtils';
 import { transcribeAudio, getCompletion, getPageInfo, getPages } from '../api/Api';
 import { useRoute } from './AppRouter';
 
-const uploadAudio = (audioFile, callback) => {
-    const page = BHAMNI_PAGE;
+const uploadAudio = (audioFile, pageId, callback) => {
+    const page = pageId;
     transcribeAudio([{ name: "transcription[audio_file]", value: audioFile }], page)
         .then(result => {
             console.log(result);
@@ -236,7 +236,7 @@ export default function Home() {
                                 </span>
                                 <div
                                     onClick={() => {
-                                        uploadAudio(recording, setTranscription);
+                                        uploadAudio(recording, pageData.id, setTranscription);
                                     }}
                                     className="tw-button tw-flex tw-items-center tw-space-x-4 tw-px-2 tw-py-2 tw-bg-blue-600 tw-text-white tw-rounded-xl tw-cursor-pointer hover:tw-bg-blue-700"
                                 >
