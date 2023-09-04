@@ -12,6 +12,20 @@ export const triggerScan = (callback) => {
   callback(fields);
 };
 
+function setNativeValue(element, value) {
+  let lastValue = element.value;
+  element.value = value;
+  let event = new Event("input", { value: value, bubbles: true });
+  // React 15
+  event.simulated = true;
+  // React >= 16
+  let tracker = element._valueTracker;
+  if (tracker) {
+    tracker.setValue(lastValue);
+  }
+  element.dispatchEvent(event);
+}
+
 export const triggerUpdateFields = (updateFields) => {
   console.log("triggerUpdateFields", updateFields);
   const formFields = document.querySelectorAll("input, select, textarea");
@@ -25,17 +39,24 @@ export const triggerUpdateFields = (updateFields) => {
     );
     // Check if `message.fields` has a field with the same name as `field.name`
 
-    console.log("New Compare");
-
     const matchingField = updateFields.find(
       (f) => compare(f.name, field.name) || compare(f.id, field.id)
     );
     if (matchingField) {
-      // Update the field value to the value from `message.fields`
-      field.value = matchingField.value;
-      // Trigger the change event
-      let event = new Event("change", { bubbles: true });
-      field.dispatchEvent(event);
+      console.log(
+        "Updating field",
+        field.name,
+        "id: ",
+        field.id,
+        "with value",
+        field.value
+      );
+      setNativeValue(field, matchingField.value);
+      // // Update the field value to the value from `message.fields`
+      // field.value = matchingField.value;
+      // // Trigger the change event
+      // let event = new Event("change", { bubbles: true });
+      // field.dispatchEvent(event);
     }
   });
 };

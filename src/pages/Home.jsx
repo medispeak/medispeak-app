@@ -47,7 +47,7 @@ const fetchPageInfo = (page, callback) => {
 
 
 const populateFieldsOnPage = (autofillData, fields, autofillFields) => {
-    console.log("Populating fields", autofillData, fields, autofillFields);
+    console.log("Populating fields", autofillData, "in fields", fields, "autofillField", autofillFields);
     const updatedFields = fields
         .filter(field => autofillFields.find(autofillField => autofillField.title === field.identifier))
         .map(field => {
@@ -117,7 +117,7 @@ export default function Home() {
                 <div className="tw-flex tw-justify-between tw-items-center tw-mx-4 tw-my-2">
                     <span className="tw-text-base tw-font-bold tw-blue-800">{title}</span>
                     <div className="tw-text-sm tw-font-semibold tw-flex tw-gap-2 tw-items-center">
-                        MediSpeak <span className="tw-text-xs tw-italic tw-text-gray-600">v0.1</span>
+                        MediSpeak <span className="tw-text-xs tw-italic tw-text-gray-600">v0.1.1</span>
                         <button
                             onClick={() => navigate('settings')}
                         >
