@@ -12,7 +12,23 @@ export const triggerScan = (callback) => {
   callback(fields);
 };
 
-function setNativeValue(element, value) {
+const withMetadata = (metadata, callback) => {
+  if (metadata && metadata !== "" && typeof metadata === "string") {
+    // Check if metadata is a valid JSON
+    try {
+      console.log("Parsing metadata", `${metadata}`);
+      const metadataObj = JSON.parse(metadata);
+      if (metadataObj) {
+        return callback(metadataObj);
+      }
+    } catch (e) {
+      console.error("Error parsing metadata", e);
+    }
+  }
+  return null;
+};
+
+function setNativeValue(element, value, metadata, delay) {
   let lastValue = element.value;
   element.value = value;
   let event = new Event("input", { value: value, bubbles: true });
@@ -24,39 +40,66 @@ function setNativeValue(element, value) {
     tracker.setValue(lastValue);
   }
   element.dispatchEvent(event);
+
+  withMetadata(metadata, (meta) => {
+    if (meta.routine === "dropdown")
+      setTimeout(() => {
+        console.log("Triggering dropdown with value", value);
+        const inputElement = document.querySelector(meta.query);
+        inputElement.focus();
+        const tabEvent = new KeyboardEvent("keydown", {
+          keyCode: 9,
+          bubbles: true,
+        });
+        inputElement.dispatchEvent(tabEvent);
+      }, delay);
+  });
 }
 
 export const triggerUpdateFields = (updateFields) => {
-  console.log("triggerUpdateFields", updateFields);
-  const formFields = document.querySelectorAll("input, select, textarea");
-  const fields = Array.from(formFields).forEach((field) => {
-    console.log(
-      "Updating field",
-      field.name,
-      field.id,
-      "with value",
-      field.value
-    );
-    // Check if `message.fields` has a field with the same name as `field.name`
+  const recursiveScan = (field) => {
+    console.log("recursiveScan", field);
 
-    const matchingField = updateFields.find(
-      (f) => compare(f.name, field.name) || compare(f.id, field.id)
-    );
+    const metaMatch = withMetadata(field.metadata, (meta) => {
+      return document.querySelector(meta.query);
+    });
+
+    if (metaMatch) {
+      console.log("Found element by metadata", field.title);
+      return metaMatch;
+    }
+
+    console.log("Getting element by name | id", field.title);
+    const matchesByName = document.getElementsByName(field.title);
+
+    if (matchesByName.length > 0) {
+      console.log("Found element by name", field.title);
+      return matchesByName[0];
+    }
+
+    const matchesById = document.getElementById(field.title);
+    if (matchesById) {
+      console.log("Found element by id", field.title);
+      return matchesById;
+    }
+
+    console.log("No element found for", field.title);
+    return null;
+  };
+
+  console.log("triggerUpdateFields", updateFields);
+  updateFields.forEach((field, index) => {
+    console.log("Updating field", field);
+
+    const matchingField = recursiveScan(field);
+
     if (matchingField) {
-      console.log(
-        "Updating field",
-        field.name,
-        "id: ",
-        field.id,
-        "with value",
-        field.value
+      console.log("Updating field", field.title, "with value", field.value);
+      setNativeValue(matchingField, field.value, field.metadata, index * 250);
+    } else {
+      console.error(
+        `Field with name ${field.name} and id ${field.id} not found`
       );
-      setNativeValue(field, matchingField.value);
-      // // Update the field value to the value from `message.fields`
-      // field.value = matchingField.value;
-      // // Trigger the change event
-      // let event = new Event("change", { bubbles: true });
-      // field.dispatchEvent(event);
     }
   });
 };

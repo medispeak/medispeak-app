@@ -46,20 +46,13 @@ const fetchPageInfo = (page, callback) => {
 }
 
 
-const populateFieldsOnPage = (autofillData, fields, autofillFields) => {
-    console.log("Populating fields", autofillData, "in fields", fields, "autofillField", autofillFields);
-    const updatedFields = fields
-        .filter(field => autofillFields.find(autofillField => autofillField.title === field.identifier))
-        .map(field => {
-            const matchingDataField = autofillData[field.identifier];
-            if (matchingDataField) {
-                console.log("Matching Data Field", field.identifier, matchingDataField)
-                return { ...field, value: matchingDataField };
-            }
-            console.log("No Matching Data Field", field.identifier)
-            return field;
-        })
-    triggerUpdateFields(updatedFields);
+const populateFieldsOnPage = (autofillData, autofillFields) => {
+    console.log("Populating fields", autofillData, "in fields", autofillFields);
+    triggerUpdateFields(
+        autofillFields
+            .map(field => ({ ...field, value: autofillData[field.title] }))
+            .filter(field => field.value)
+    );
 }
 
 export default function Home() {
@@ -71,8 +64,8 @@ export default function Home() {
     // const fqdn = "care.ohc.network";
 
     const [recording, setRecording] = useState(false);
-    const [transcription, setTranscription] = useState(null);
-    const [fields, setFields] = useState([]);
+    const [transcription, setTranscription] = useState();
+
     const [pages, setPages] = useState();
     const [pageData, setPageData] = useState();
     const [autofillData, setAutofillData] = useState();
@@ -94,8 +87,6 @@ export default function Home() {
             }
         }
         fetchPages(shortlistPage);
-        // fetchPageInfo(BAHMNI_APP_ID, setPageData);
-        triggerScan(setFields);
     }, []);
 
     useEffect(() => {
@@ -117,7 +108,7 @@ export default function Home() {
                 <div className="tw-flex tw-justify-between tw-items-center tw-mx-4 tw-my-2">
                     <span className="tw-text-base tw-font-bold tw-blue-800">{title}</span>
                     <div className="tw-text-sm tw-font-semibold tw-flex tw-gap-2 tw-items-center">
-                        MediSpeak <span className="tw-text-xs tw-italic tw-text-gray-600">v0.1.1</span>
+                        MediSpeak <span className="tw-text-xs tw-italic tw-text-gray-600">v0.1.2</span>
                         <button
                             onClick={() => navigate('settings')}
                         >
@@ -164,9 +155,9 @@ export default function Home() {
                                                 <span
                                                     key={page.id}
                                                     onClick={() => setPageData(page)}
-                                                    className="tw-text-xs tw-font-semibold tw-text-gray-800 tw-cursor-pointer hover:tw-text-blue-600"
+                                                    className="tw-p-4 tw-border tw-border-gray-600 tw-text-xs tw-font-semibold tw-text-gray-800 tw-cursor-pointer hover:tw-text-blue-600"
                                                 >
-                                                    {page.title}
+                                                    {page.name}
                                                 </span>
                                             ))
                                         }
@@ -194,7 +185,7 @@ export default function Home() {
                             <div className="tw-px-4 tw-flex tw-flex-wrap tw-flex-shrink tw-gap-y-1 tw-items-start tw-max-h-48 tw-overflow-auto">
                                 {
                                     pageData?.form_fields?.map(field => (
-                                        <Badge key={field.title} text={field.title} />
+                                        <Badge key={field.title} text={field.description} />
                                     )) || <span className="tw-text-sm tw-font-semibold tw-mx-4 tw-my-2 tw-text-gray-800">No fields found</span>
                                 }
                             </div>
@@ -255,7 +246,7 @@ export default function Home() {
 
                     {autofillData && <div
                         onClick={() => {
-                            populateFieldsOnPage(autofillData, fields, pageData.form_fields);
+                            populateFieldsOnPage(autofillData, pageData.form_fields);
                         }}
                         className="tw-button tw-flex tw-items-center tw-space-x-4 tw-px-2 tw-py-2 tw-bg-blue-600 tw-text-white tw-rounded-xl tw-cursor-pointer hover:tw-bg-blue-700"
                     >
