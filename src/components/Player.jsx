@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAudioRecorder } from 'react-audio-voice-recorder';
-import { PauseIcon, PlayIcon, RecordIcon, StopIcon } from './common/AppIcons';
+import { MediSpeakIcon, PauseIcon, PlayIcon, RecordIcon, StopIcon } from './common/AppIcons';
+import Lottie from 'lottie-react';
+import animationData from './common/animation.json'
 
 const secondsToTimeText = (seconds) => {
     if (!seconds) return '00:00';
@@ -19,7 +21,7 @@ const secondsToTimeText = (seconds) => {
     return `${hoursString}${minutesFormatted}:${secsFormatted}`;
 }
 
-export default function Player({ onRecordingReady }) {
+export default function Player({ onRecordingReady, controlledState }) {
 
     const [audioSrc, setAudioSrc] = useState(null);
 
@@ -43,13 +45,72 @@ export default function Player({ onRecordingReady }) {
         setAudioSrc(audioSrc);
     }, [recordingBlob])
 
-    const status = isRecording ? 'Recording' : isPaused ? 'Paused' : recordingBlob ? 'Done' : 'Ready';
+    useEffect(() => {
+        if (controlledState === 'Retry') {
+            setAudioSrc(null);
+        }
+    }, [controlledState])
 
-    const previewPlayerRef = React.useRef(null);
+    const status = isPaused ? 'Paused' : isRecording ? 'Recording' : audioSrc ? 'Done' : 'Ready';
+
+    const previewPlayerRef = useRef(null);
+
+    const animationRef = useRef(null);
+
+    const togglePauseResumeHook = () => {
+        if (status === 'Recording')
+            animationRef && animationRef.current && animationRef.current.pause();
+        else
+            animationRef && animationRef.current && animationRef.current.play();
+        togglePauseResume();
+    }
+
+    const renderforStatus = (status) => {
+        switch (status) {
+            case 'Recording':
+            case 'Paused':
+                return (
+                    <div className="tw-flex tw-flex-col tw-justify-center tw-items-center my-2">
+                        <span className="tw-text-gray-900">{secondsToTimeText(recordingTime)}</span>
+                        <Lottie animationData={animationData} lottieRef={animationRef} />
+                        {
+                            status === 'Recording' ? (
+                                <button onClick={togglePauseResumeHook} className="tw-bg-blue-700 tw-rounded-full tw-p-2">
+                                    <PauseIcon className="tw-h-6 tw-w-6 tw-flex-none tw-text-white tw-rounded-xl tw-cursor-pointer hover:tw-text-gray-100" />
+                                </button>
+                            ) : (
+                                <div className="tw-flex tw-justify-center tw-gap-2 tw-text-sm tw-text-white">
+                                    <button onClick={togglePauseResumeHook} className="tw-bg-blue-700 tw-rounded-full tw-p-2 tw-px-3">
+                                        Resume
+                                    </button>
+                                    <button onClick={
+                                        () => {
+                                            stopRecording();
+                                        }
+                                    } className="tw-bg-blue-100 tw-rounded-full tw-p-2 tw-px-3 tw-text-blue-700">
+                                        Start Transcribing
+                                    </button>
+                                </div>
+                            )
+                        }
+                    </div >);
+            case 'Done':
+                return '';
+            default:
+                return (
+                    <div className="tw-flex tw-flex-col tw-justify-center tw-items-center">
+                        <button onClick={startRecording} className="tw-flex tw-rounded-full tw-bg-blue-700 tw-p-2 tw-text-white tw-text-sm tw-justify-center tw-items-center">
+                            <MediSpeakIcon /> <span className="pr-1">Start Recording</span>
+                        </button>
+                    </div>
+                );
+        }
+    }
 
     return (
         <div className="tw-relative tw-z-10">
-            <div className="tw-flex w-full tw-bg-white tw-ring-1 tw-ring-slate-700/10">
+            {renderforStatus(status)}
+            {/* <div className="tw-flex w-full tw-bg-white tw-ring-1 tw-ring-slate-700/10">
                 <div
                     onClick={() => {
                         if (isRecording) {
@@ -110,7 +171,7 @@ export default function Player({ onRecordingReady }) {
                         </path>
                     </svg>
                 </div>
-            </div>
+            </div> */}
         </div>
     )
 }

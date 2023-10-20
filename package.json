@@ -9,10 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "audio-recorder-polyfill": "^0.4.1",
     "jotai": "^2.3.1",
-    "react": "^18.2.0",
+    "lottie-react": "2.4.0",
+    "react": "18.2.0",
     "react-audio-voice-recorder": "^2.1.2",
-    "react-dom": "^18.2.0"
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.18",

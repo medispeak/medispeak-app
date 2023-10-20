@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 const defaultTheme = require("tailwindcss/defaultTheme");
+// Primary Colour: #3803FF
 
 const config = {
   mode: "jit",
@@ -13,6 +14,9 @@ const config = {
     extend: {
       fontFamily: {
         sans: ["Inter var", ...defaultTheme.fontFamily.sans],
+      },
+      colors: {
+        primary: "#3803FF",
       },
     },
   },

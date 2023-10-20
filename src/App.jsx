@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { MediSpeakIcon } from "./components/common/AppIcons";
 import AppRouter from "./pages/AppRouter";
 
+import AudioRecorder from 'audio-recorder-polyfill'
+window.MediaRecorder = AudioRecorder
 
 function App() {
   const [showPopOver, setShowPopOver] = useState(false);
@@ -25,10 +27,10 @@ function App() {
           onClick={() => setShowPopOver(!showPopOver)}
         >
           <span
-            className={"tw-absolute tw-inline-flex tw-h-full tw-w-full tw-rounded-full tw-bg-blue-400 tw-opacity-20 md:t-opacity-50 tw-z-10 " +
+            className={"tw-absolute tw-inline-flex tw-h-full tw-w-full tw-rounded-full tw-bg-primary tw-opacity-20 md:t-opacity-50 tw-z-10 " +
               (firstLoad ? "tw-animate-ping" : "")}
           ></span>
-          <MediSpeakIcon />
+          <MediSpeakIcon className="tw-w-8 tw-h-8" />
         </div>
       </div>
     </div>
