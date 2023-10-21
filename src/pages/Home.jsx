@@ -124,7 +124,7 @@ export default function Home() {
                 {/* Title & Page Title*/}
                 <div className="tw-flex tw-justify-between tw-items-center tw-mx-4 tw-my-2">
                     <div className="tw-text-sm tw-font-semibold tw-flex tw-gap-2 tw-items-center">
-                        Medispeak <span className="tw-text-xs tw-italic tw-text-gray-600">v0.2.1</span>
+                        Medispeak <span className="tw-text-xs tw-italic tw-text-gray-600">v0.2.2</span>
                     </div>
                     <button
                         className="tw-flex tw-gap-1 tw-items-center text-blue-700"
