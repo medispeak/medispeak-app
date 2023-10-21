@@ -3,6 +3,13 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 // Primary Colour: #3803FF
 
+const isDev = process.env.NODE_ENV === "development";
+const devSafeList = [
+  {
+    pattern: /./,
+  },
+];
+
 const config = {
   mode: "jit",
   content: [
@@ -22,11 +29,7 @@ const config = {
   },
   prefix: "tw-",
   plugins: [],
-  safelist: [
-    {
-      pattern: /./,
-    },
-  ],
+  safelist: isDev ? devSafeList : [],
   corePlugins: {
     preflight: false,
   },
