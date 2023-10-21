@@ -126,7 +126,7 @@ export default function Home() {
                 {!pageData ? (
                     pages === null ? (
                         // When the WebApp is not yet setup in the MediSpeak account
-                        <div className="tw-flex tw-flex-col tw-gap-4 tw-justify-center tw-items-center tw-h-1/2 tw-p-4">
+                        <div className="tw-flex tw-flex-col tw-gap-4 tw-justify-center tw-items-center tw-p-4">
                             <span>
                                 This WebApp is not yet setup in your MediSpeak account
                             </span>
@@ -137,7 +137,7 @@ export default function Home() {
                     ) : pages ? (
                         // When the WebApp is setup in the MediSpeak account but no Pages are setup
                         pages.length === 0 ? (
-                            <div className="tw-flex tw-flex-col tw-gap-4 tw-justify-center tw-items-center tw-h-1/2 tw-p-4">
+                            <div className="tw-flex tw-flex-col tw-gap-4 tw-justify-center tw-items-center tw-p-4">
                                 <span>
                                     No Pages found for this WebApp
                                 </span>
@@ -170,7 +170,7 @@ export default function Home() {
                         )
                     ) : (
                         // pages === undefined || Loading Data from your MediSpeak Account
-                        <div className="tw-flex tw-justify-center tw-items-center tw-h-1/2 tw-p-4">
+                        <div className="tw-flex tw-justify-center tw-items-center tw-p-4">
                             <span>
                                 Loading Data from your MediSpeak Account
                             </span>
