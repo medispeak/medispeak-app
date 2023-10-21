@@ -2,6 +2,7 @@ import { useAtom } from "jotai";
 import { authAtom } from "../store/AuthStore";
 
 const BASE_URL = "https://www.medispeak.in/";
+// const BASE_URL = "http://localhost:3000/";
 
 export function request(url, method = "GET", data) {
   const authToken = sessionStorage.getItem("access_token");
@@ -72,9 +73,9 @@ export function getPageInfo(page) {
   return request(url);
 }
 
-export function getPages() {
+export function findTemplate() {
   // https://www.medispeak.in/api/v1/webapps
-  const url = `${BASE_URL}api/v1/webapps`;
+  const url = `${BASE_URL}api/v1/templates/find_by_domain`;
   return request(url);
 }
 

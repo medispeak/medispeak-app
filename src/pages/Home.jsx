@@ -4,7 +4,7 @@ import { RecordIcon, RetryIcon, SettingsIcon, StopIcon, TranscribeIcon } from '.
 import Player from '../components/Player';
 import { triggerScan, triggerUpdateFields } from '../utils/ScanUtils';
 
-import { transcribeAudio, getCompletion, getPageInfo, getPages } from '../api/Api';
+import { transcribeAudio, getCompletion, getPageInfo, findTemplate } from '../api/Api';
 import { useRoute } from './AppRouter';
 
 import Lottie from 'lottie-react';
@@ -14,9 +14,12 @@ const properText = (text) =>
     text.split("_").map(word => word[0].toUpperCase() + word.slice(1)).join(" ");
 
 
-const uploadAudio = (audioFile, pageId, callback) => {
+const uploadAudio = (recording, pageId, callback) => {
     const page = pageId;
-    transcribeAudio([{ name: "transcription[audio_file]", value: audioFile }], page)
+    transcribeAudio([
+        { name: "transcription[audio_file]", value: recording.file },
+        { name: "transcription[duration]", value: recording.duration }
+    ], page)
         .then(result => {
             console.log(result);
             if (callback) callback(result);
@@ -34,7 +37,7 @@ const populateFields = (transcription, callback) => {
 }
 
 const fetchPages = (callback) => {
-    getPages()
+    findTemplate()
         .then(result => {
             console.log(result);
             if (callback) callback(result);
@@ -81,13 +84,12 @@ export default function Home() {
     const { navigate } = useRoute();
 
     useEffect(() => {
-        const shortlistPage = (webapps) => {
-            const webapp = webapps.find(page => page.fqdn === fqdn);
-            if (webapp) {
-                if (webapp.pages.length === 1) {
-                    setPageData(webapp.pages[0]);
+        const shortlistPage = (template) => {
+            if (template) {
+                if (template.pages.length === 1) {
+                    setPageData(template.pages[0]);
                 } else {
-                    setPages(webapp.pages);
+                    setPages(template.pages);
                 }
             } else {
                 console.log("No page found for", fqdn);
@@ -265,9 +267,12 @@ export default function Home() {
                 {/* Recording Controls */}
                 <Player
                     controlledState={playerState}
-                    onRecordingReady={(recordingBlob) => {
+                    onRecordingReady={(recordingBlob, duration) => {
                         const recordingFile = new File([recordingBlob], 'recording.wav', { type: 'audio/wav' });
-                        setRecording(recordingFile);
+                        setRecording({
+                            file: recordingFile,
+                            duration: duration
+                        });
                     }}
                 />
                 {!recording && <div className="tw-flex tw-justify-center tw-items-start tw-h-1/2 tw-p-4 tw-text-sm tw-text-gray-700">

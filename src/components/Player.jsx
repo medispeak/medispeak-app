@@ -39,7 +39,7 @@ export default function Player({ onRecordingReady, controlledState }) {
 
     useEffect(() => {
         if (!recordingBlob) return;
-        onRecordingReady(recordingBlob);
+        onRecordingReady(recordingBlob, recordingTime);
         // recordingBlob will be present at this point after 'stopRecording' has been called
         const audioSrc = URL.createObjectURL(recordingBlob);
         setAudioSrc(audioSrc);
