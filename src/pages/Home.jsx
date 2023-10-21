@@ -41,20 +41,8 @@ const fetchPages = (callback) => {
         .then(result => {
             console.log(result);
             if (callback) callback(result);
-        }).catch(error => console.log('error', error));
+        }).catch(error => callback(null));
 }
-
-const fetchPageInfo = (page, callback) => {
-    getPageInfo(page)
-        .then(result => {
-            console.log(result);
-            if (result) {
-                const currentPage = result.pages?.find(page => true);
-                if (callback) callback(currentPage);
-            }
-        }).catch(error => console.log('error', error));
-}
-
 
 const populateFieldsOnPage = (autofillData, autofillFields) => {
     console.log("Populating fields", autofillData, "in fields", autofillFields);
@@ -122,20 +110,18 @@ export default function Home() {
         <div className="tw-flex tw-h-full tw-flex-col tw-justify-between">
             <div>
                 {/* Title & Page Title*/}
-                <div className="tw-flex tw-justify-between tw-items-center tw-mx-4 tw-my-2">
-                    <div className="tw-text-sm tw-font-semibold tw-flex tw-gap-2 tw-items-center">
-                        Medispeak <span className="tw-text-xs tw-italic tw-text-gray-600">v0.2.2</span>
+                <div className="tw-flex tw-justify-between tw-items-center tw-px-4 tw-py-2 tw-border-b tw-border-gray-100 tw-shadow-sm">
+                    <div className="tw-text-sm tw-font-semibold tw-flex tw-gap-1 tw-items-end">
+                        Medispeak <span className="tw-text-xs tw-pb-px tw-italic tw-text-gray-600">v0.2.2</span>
                     </div>
                     <button
-                        className="tw-flex tw-gap-1 tw-items-center text-blue-700"
+                        className="tw-flex tw-gap-px tw-items-center text-gray-700 tw-text-sm"
                         onClick={() => navigate('settings')}
                     >
-                        <SettingsIcon className="tw-h-6 tw-w-6 tw-flex-none tw-rounded-xl tw-cursor-pointer" /> Settings
+                        <SettingsIcon className="tw-h-5 tw-w-5 tw-flex-none tw-rounded-xl tw-cursor-pointer" /> Settings
                     </button>
                 </div>
 
-                {/* Divider */}
-                <div className="tw-bg-gray-800 tw-mx-4 tw-my-2 tw-h-1"></div>
                 {/* When a Page is not yet selected, Show the List of Pages Available in the WebApp */}
                 {!pageData ? (
                     pages === null ? (
@@ -172,7 +158,7 @@ export default function Home() {
                                                 <span
                                                     key={page.id}
                                                     onClick={() => setPageData(page)}
-                                                    className="tw-p-4 tw-border tw-border-gray-600 tw-text-xs tw-font-semibold tw-text-gray-800 tw-cursor-pointer hover:tw-text-blue-600"
+                                                    className="tw-p-4 tw-border tw-border-gray-100 tw-text-xs tw-font-semibold tw-text-gray-700 tw-cursor-pointer tw-rounded-lg hover:tw-text-blue-800 hover:tw-border-blue-100"
                                                 >
                                                     {page.name}
                                                 </span>
@@ -216,9 +202,9 @@ export default function Home() {
                 {/* Preview Transcription in a textarea */}
                 {transcription && (
                     <>
-                        <span className='tw-ml-2 tw-text-gray-400 font-normal '>Preview Transcription and Edit </span>
+                        <span className='tw-ml-2 tw-text-gray-400 tw-text-sm '>Preview Transcription </span>
                         <textarea
-                            className="tw-w-full tw-h-full tw-p-2 tw-border-0 tw-text-sm focus:tw-outline-none tw-bg-gray-100 tw-text-gray-700 tw-rounded-none tw-resize-none"
+                            className="tw-w-full tw-h-full tw-p-2 tw-border-0 tw-text-sm focus:tw-outline-none tw-bg-gray-50 tw-text-gray-700 tw-rounded-none tw-resize-none"
                             value={transcription.transcription_text}
                             rows={8}
                             readOnly
@@ -255,31 +241,48 @@ export default function Home() {
                         )
                     }
 
-                    {autofillData && <div
-                        onClick={() => {
-                            populateFieldsOnPage(autofillData, pageData.form_fields);
-                        }}
-                        className="tw-button tw-rounded-full tw-flex tw-items-center tw-space-x-4 tw-px-4 tw-py-2 tw-bg-blue-600 tw-text-white tw-cursor-pointer hover:tw-bg-blue-700"
-                    >
-                        Auto-Fill Form Fields
-                    </div>}
+                    {transcription &&
+                        (autofillData ?
+                            <div
+                                onClick={() => {
+                                    populateFieldsOnPage(autofillData, pageData.form_fields);
+                                }}
+                                className="tw-button tw-rounded-full tw-flex tw-items-center tw-space-x-4 tw-px-4 tw-py-2 tw-bg-blue-600 tw-text-white tw-cursor-pointer hover:tw-bg-blue-700"
+                            >
+                                Auto-Fill Form Fields
+                            </div>
+                            // Else: Loading State for Auto-Fill Button
+                            : <div className="tw-button tw-rounded-full tw-flex tw-items-center tw-space-x-4 tw-px-4 tw-py-2 tw-bg-gray-100 tw-text-gray-700 tw-cursor-wait">
+                                <svg className="tw-animate-spin -tw-ml-1 tw-mr-3 tw-h-5 tw-w-5 tw-text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="tw-opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path className="tw-opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Auto-Fill Form Fields
+                            </div>
+                        )
+                    }
                 </div>
                 {/* Recording Controls */}
-                <Player
-                    controlledState={playerState}
-                    onRecordingReady={(recordingBlob, duration) => {
-                        const recordingFile = new File([recordingBlob], 'recording.wav', { type: 'audio/wav' });
-                        setRecording({
-                            file: recordingFile,
-                            duration: duration
-                        });
-                    }}
-                />
-                {!recording && <div className="tw-flex tw-justify-center tw-items-start tw-h-1/2 tw-p-4 tw-text-sm tw-text-gray-700">
-                    <span>
-                        Record your voice note to get started
-                    </span>
-                </div>}
+                {pageData &&
+                    <>
+                        <Player
+                            controlledState={playerState}
+                            onRecordingReady={(recordingBlob, duration) => {
+                                const recordingFile = new File([recordingBlob], 'recording.wav', { type: 'audio/wav' });
+                                setRecording({
+                                    file: recordingFile,
+                                    duration: duration
+                                });
+                            }}
+                        />
+                        {!recording && <div className="tw-flex tw-justify-center tw-items-start tw-h-1/2 tw-p-4 tw-text-sm tw-text-gray-700">
+                            <span>
+                                Record your voice note to get started
+                            </span>
+                        </div>}
+                    </>
+                }
+
             </div>
         </div >
     )

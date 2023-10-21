@@ -25,6 +25,9 @@ export default function Player({ onRecordingReady, controlledState }) {
 
     const [audioSrc, setAudioSrc] = useState(null);
 
+    // Temp Variable to store duration of recording when returning recordingBlob
+    const [recordingDuration, setRecordingDuration] = useState(0);
+
     const {
         startRecording,
         stopRecording,
@@ -39,7 +42,7 @@ export default function Player({ onRecordingReady, controlledState }) {
 
     useEffect(() => {
         if (!recordingBlob) return;
-        onRecordingReady(recordingBlob, recordingTime);
+        onRecordingReady(recordingBlob, recordingDuration);
         // recordingBlob will be present at this point after 'stopRecording' has been called
         const audioSrc = URL.createObjectURL(recordingBlob);
         setAudioSrc(audioSrc);
@@ -85,6 +88,7 @@ export default function Player({ onRecordingReady, controlledState }) {
                                     </button>
                                     <button onClick={
                                         () => {
+                                            setRecordingDuration(recordingTime);
                                             stopRecording();
                                         }
                                     } className="tw-bg-blue-100 tw-rounded-full tw-p-2 tw-px-3 tw-text-blue-700">
