@@ -5,25 +5,26 @@ import { useEffect, useState } from "react";
 import Settings from "./Settings";
 import { authAtom, useAuthActions } from "../store/AuthStore";
 
-const publicRoutes = {
-    settings: () => <Settings />,
-    "": () => <Settings />
-}
+const publicRoutes = (props) => ({
+    settings: () => <Settings {...props} />,
+    "": () => <Settings {...props} />
+})
 
-const routes = {
-    home: () => <Home />,
-    settings: () => <Settings />,
+const routes = (props) => ({
+    home: () => <Home {...props} />,
+    settings: () => <Settings {...props} />,
     // default
-    "": () => <Home />
-}
+    "": () => <Home {...props} />
+})
 
-const computeRoute = (route, allowedRoutes) => {
-    const matchedRoute = allowedRoutes[route];
+const computeRoute = (route, allowedRoutes, props) => {
+    const computedAllowedRoutes = allowedRoutes(props);
+    const matchedRoute = computedAllowedRoutes[route];
     if (matchedRoute) {
         return matchedRoute();
     }
 
-    const defaultRoute = allowedRoutes[""];
+    const defaultRoute = allowedRoutes(props)[""];
 
     return defaultRoute();
 }
@@ -37,7 +38,7 @@ export const useRoute = () => {
     }
 }
 
-export default function AppRouter() {
+export default function AppRouter({ onHide }) {
 
     const auth = useAtomValue(authAtom);
     const route = useAtomValue(routeAtom)
@@ -54,7 +55,7 @@ export default function AppRouter() {
 
     return (
         <AppContainer>
-            {computeRoute(route, allowedRoutes)}
+            {computeRoute(route, allowedRoutes, { onHide })}
         </AppContainer>
     )
 }

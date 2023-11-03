@@ -51,7 +51,7 @@ const populateFieldsOnPage = (autofillData, autofillFields) => {
     );
 }
 
-export default function Home() {
+export default function Home({ onHide }) {
 
     // Current URL
     const url = window.location.href;
@@ -110,7 +110,7 @@ export default function Home() {
                 {/* Title & Page Title*/}
                 <div className="tw-flex tw-justify-between tw-items-center tw-px-4 tw-py-2 tw-border-b tw-border-gray-100 tw-shadow-sm">
                     <div className="tw-text-sm tw-font-semibold tw-flex tw-gap-1 tw-items-end">
-                        Medispeak <span className="tw-text-xs tw-pb-px tw-italic tw-text-gray-600">v0.2.3</span>
+                        Medispeak <span className="tw-text-xs tw-pb-px tw-italic tw-text-gray-600">v0.2.4</span>
                     </div>
                     <button
                         className="tw-flex tw-gap-px tw-items-center text-gray-700 tw-text-sm"
@@ -244,6 +244,7 @@ export default function Home() {
                             <div
                                 onClick={() => {
                                     populateFieldsOnPage(autofillData, pageData.form_fields);
+                                    onHide();
                                 }}
                                 className="tw-button tw-rounded-full tw-flex tw-items-center tw-space-x-4 tw-px-4 tw-py-2 tw-bg-blue-600 tw-text-white tw-cursor-pointer hover:tw-bg-blue-700"
                             >
