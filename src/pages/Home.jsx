@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { RecordIcon, RetryIcon, SettingsIcon, StopIcon, TranscribeIcon } from '../components/common/AppIcons';
 import Player from '../components/Player';
-import { triggerScan, triggerUpdateFields } from '../utils/ScanUtils';
+import { triggerUpdateFields } from '../utils/ScanUtils';
 
 import { transcribeAudio, getCompletion, getPageInfo, findTemplate } from '../api/Api';
 import { useRoute } from './AppRouter';
@@ -12,7 +12,6 @@ import animationData from '../components/common/animation.json'
 
 const properText = (text) =>
     text.split("_").map(word => word[0].toUpperCase() + word.slice(1)).join(" ");
-
 
 const uploadAudio = (recording, pageId, callback) => {
     const page = pageId;
@@ -26,7 +25,6 @@ const uploadAudio = (recording, pageId, callback) => {
         })
         .catch(error => console.log('error', error));
 }
-
 
 const populateFields = (transcription, callback) => {
     getCompletion(transcription)
@@ -112,7 +110,7 @@ export default function Home() {
                 {/* Title & Page Title*/}
                 <div className="tw-flex tw-justify-between tw-items-center tw-px-4 tw-py-2 tw-border-b tw-border-gray-100 tw-shadow-sm">
                     <div className="tw-text-sm tw-font-semibold tw-flex tw-gap-1 tw-items-end">
-                        Medispeak <span className="tw-text-xs tw-pb-px tw-italic tw-text-gray-600">v0.2.2</span>
+                        Medispeak <span className="tw-text-xs tw-pb-px tw-italic tw-text-gray-600">v0.2.3</span>
                     </div>
                     <button
                         className="tw-flex tw-gap-px tw-items-center text-gray-700 tw-text-sm"
@@ -254,7 +252,7 @@ export default function Home() {
                             // Else: Loading State for Auto-Fill Button
                             : <div className="tw-button tw-rounded-full tw-flex tw-items-center tw-space-x-4 tw-px-4 tw-py-2 tw-bg-gray-100 tw-text-gray-700 tw-cursor-wait">
                                 <svg className="tw-animate-spin -tw-ml-1 tw-mr-3 tw-h-5 tw-w-5 tw-text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="tw-opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <circle className="tw-opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="tw-opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                                 Auto-Fill Form Fields
