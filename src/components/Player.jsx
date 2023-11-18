@@ -103,7 +103,7 @@ export default function Player({ onRecordingReady, controlledState }) {
             default:
                 return (
                     <div className="tw-flex tw-flex-col tw-justify-center tw-items-center">
-                        <button onClick={startRecording} className="tw-flex tw-rounded-full tw-bg-blue-700 tw-p-2 tw-text-white tw-text-sm tw-justify-center tw-items-center">
+                        <button onClick={startRecording} className="tw-flex tw-rounded-full tw-bg-blue-700 tw-p-2 tw-text-white tw-text-sm tw-justify-center tw-items-center tw-border-0">
                             <MediSpeakIcon /> <span className="pr-1">Start Recording</span>
                         </button>
                     </div>

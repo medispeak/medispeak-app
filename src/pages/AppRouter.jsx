@@ -4,6 +4,7 @@ import AppContainer from "../components/AppContainer";
 import { useEffect, useState } from "react";
 import Settings from "./Settings";
 import { authAtom, useAuthActions } from "../store/AuthStore";
+import Transcriptions from "./Transcriptions";
 
 const publicRoutes = (props) => ({
     settings: () => <Settings {...props} />,
@@ -13,6 +14,7 @@ const publicRoutes = (props) => ({
 const routes = (props) => ({
     home: () => <Home {...props} />,
     settings: () => <Settings {...props} />,
+    transcriptions: () => <Transcriptions {...props} />,
     // default
     "": () => <Home {...props} />
 })
@@ -54,7 +56,7 @@ export default function AppRouter({ onHide }) {
     const allowedRoutes = isAuthenticated ? routes : publicRoutes;
 
     return (
-        <AppContainer>
+        <AppContainer currentRoute={route}>
             {computeRoute(route, allowedRoutes, { onHide })}
         </AppContainer>
     )

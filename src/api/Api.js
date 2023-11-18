@@ -79,6 +79,12 @@ export function findTemplate() {
   return request(url);
 }
 
+export function getTanscriptions(page) {
+  // https://www.medispeak.in/api/v1/transcriptions/
+  const url = `${BASE_URL}api/v1/transcriptions/${page ? `?page=${page}` : ""}`;
+  return request(url);
+}
+
 export function getCurrentUser() {
   // https://www.medispeak.in/api/v1/me
   const url = `${BASE_URL}api/v1/me`;

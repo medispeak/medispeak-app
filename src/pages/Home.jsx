@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAudioRecorder } from 'react-audio-voice-recorder';
 import { RecordIcon, RetryIcon, SettingsIcon, StopIcon, TranscribeIcon } from '../components/common/AppIcons';
 import Player from '../components/Player';
 import { triggerUpdateFields } from '../utils/ScanUtils';
 
-import { transcribeAudio, getCompletion, getPageInfo, findTemplate } from '../api/Api';
+import { transcribeAudio, getCompletion, getPageInfo, findTemplate, getTanscriptions } from '../api/Api';
 import { useRoute } from './AppRouter';
 
 import Lottie from 'lottie-react';
@@ -51,7 +51,7 @@ const populateFieldsOnPage = (autofillData, autofillFields) => {
     );
 }
 
-export default function Home({ onHide }) {
+export default function Home({ onHide, transcriptionRecord }) {
 
     // Current URL
     const url = window.location.href;
@@ -59,7 +59,8 @@ export default function Home({ onHide }) {
     // fqdn Override
     // const fqdn = "care.ohc.network";
 
-    const [recording, setRecording] = useState(false);
+    const [recordingObj, setRecordingObj] = useState(false);
+    const [recordingUri, setRecordingUri] = useState();
     const [transcription, setTranscription] = useState();
 
     const [pages, setPages] = useState();
@@ -67,11 +68,24 @@ export default function Home({ onHide }) {
     const [autofillData, setAutofillData] = useState();
     const [playerState, setPlayerState] = useState("Ready");
 
+    const autofillRef = useRef(null);
+
     const { navigate } = useRoute();
+
+    const autofillCB = (data) => {
+        setAutofillData(data)
+        // Scroll to Auto-Fill Button
+        setTimeout(() => {
+            autofillRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 1000);
+    }
 
     useEffect(() => {
         const shortlistPage = (template) => {
             if (template) {
+                if (transcriptionRecord) {
+                    setPageData(template.pages.find(page => page.id === transcriptionRecord.page_id));
+                }
                 if (template.pages.length === 1) {
                     setPageData(template.pages[0]);
                 } else {
@@ -83,20 +97,25 @@ export default function Home({ onHide }) {
             }
         }
         fetchPages(shortlistPage);
+        if (transcriptionRecord) {
+            setTranscription(transcriptionRecord);
+            setAutofillData(transcriptionRecord.ai_response);
+            setRecordingUri(transcriptionRecord.audio_file_url);
+        }
     }, []);
 
     useEffect(() => {
-        if (recording) {
-            uploadAudio(recording, pageData.id, setTranscription);
+        if (recordingObj) {
+            uploadAudio(recordingObj, pageData.id, setTranscription);
         }
-    }, [recording]);
+    }, [recordingObj]);
 
     useEffect(() => {
         console.log("Transcription", transcription);
-        if (transcription && transcription.id) {
+        if (transcription && transcription.id && !autofillData) {
             populateFields(
                 transcription.id,
-                setAutofillData
+                autofillCB
             )
         }
     }, [transcription]);
@@ -104,21 +123,14 @@ export default function Home({ onHide }) {
 
     const title = pageData ? pageData.title : "Select Page";
 
+    const selectedTab = "Home";
+
     return (
         <div className="tw-flex tw-h-full tw-flex-col tw-justify-between">
-            <div>
-                {/* Title & Page Title*/}
-                <div className="tw-flex tw-justify-between tw-items-center tw-px-4 tw-py-2 tw-border-b tw-border-gray-100 tw-shadow-sm">
-                    <div className="tw-text-sm tw-font-semibold tw-flex tw-gap-1 tw-items-end">
-                        Medispeak <span className="tw-text-xs tw-pb-px tw-italic tw-text-gray-600">v0.2.4</span>
-                    </div>
-                    <button
-                        className="tw-flex tw-gap-px tw-items-center text-gray-700 tw-text-sm"
-                        onClick={() => navigate('settings')}
-                    >
-                        <SettingsIcon className="tw-h-5 tw-w-5 tw-flex-none tw-rounded-xl tw-cursor-pointer" /> Settings
-                    </button>
-                </div>
+            <div className="tw-h-full tw-flex tw-flex-col">
+                {/* Tab Container div */}
+                {/* Tabs */}
+
 
                 {/* When a Page is not yet selected, Show the List of Pages Available in the WebApp */}
                 {!pageData ? (
@@ -146,23 +158,26 @@ export default function Home({ onHide }) {
                         ) : (
                             // When the WebApp is setup in the MediSpeak account and Pages are setup
                             // Select a Page to continue
-                            <div className="tw-flex tw-flex-col tw-gap-4 tw-mx-4 tw-my-2">
-                                <div className="tw-flex tw-flex-col tw-gap-2">
-                                    <span className="tw-text-sm tw-font-semibold tw-text-gray-800">Select Page</span>
-                                    {/* List of Pages */}
-                                    <div className="tw-flex tw-flex-col tw-gap-2">
-                                        {
-                                            pages?.map(page => (
-                                                <span
-                                                    key={page.id}
-                                                    onClick={() => setPageData(page)}
-                                                    className="tw-p-4 tw-border tw-border-gray-100 tw-text-xs tw-font-semibold tw-text-gray-700 tw-cursor-pointer tw-rounded-lg hover:tw-text-blue-800 hover:tw-border-blue-100"
-                                                >
-                                                    {page.name}
-                                                </span>
-                                            ))
-                                        }
+                            <div className="tw-flex tw-flex-col tw-gap-4 tw-mx-4 tw-my-2 tw-flex-1">
+                                <div className="tw-flex tw-flex-col tw-gap-2 tw-justify-between tw-h-full">
+                                    <div className="tw-flex tw-flex-col tw-gap-2 tw-h-full">
+                                        <span className="tw-text-sm tw-font-semibold tw-text-gray-800">Select Page</span>
+                                        {/* List of Pages */}
+                                        <div className="tw-flex tw-flex-col tw-gap-2">
+                                            {
+                                                pages?.map(page => (
+                                                    <span
+                                                        key={page.id}
+                                                        onClick={() => setPageData(page)}
+                                                        className="tw-p-4 tw-border tw-border-gray-100 tw-text-xs tw-font-semibold tw-text-gray-700 tw-cursor-pointer tw-rounded-lg hover:tw-text-blue-800 hover:tw-border-blue-100"
+                                                    >
+                                                        {page.name}
+                                                    </span>
+                                                ))
+                                            }
+                                        </div>
                                     </div>
+                                    <MyTranscriptionsButton navigate={navigate} />
                                 </div>
                             </div>
                         )
@@ -186,7 +201,9 @@ export default function Home({ onHide }) {
                             <div className="tw-px-4 tw-flex tw-flex-wrap tw-flex-shrink tw-gap-2 tw-items-start tw-max-h-48 tw-overflow-auto">
                                 {
                                     pageData?.form_fields?.map(field => (
-                                        <Badge key={field.title} text={properText(field.title)} />
+                                        <Badge key={field.title}>
+                                            {properText(field.title)}
+                                        </Badge>
                                     )) || <span className="tw-text-sm tw-font-semibold tw-mx-4 tw-my-2 tw-text-gray-800">No fields found</span>
                                 }
                             </div>
@@ -197,34 +214,70 @@ export default function Home({ onHide }) {
 
             {/* Transcription Controls */}
             <div className='tw-flex tw-flex-col'>
+                {/* Preview Audio Recording */}
+                {recordingUri && (
+                    <>
+                        <span className='tw-ml-2 tw-mt-2 tw-text-gray-400 tw-text-sm '>Preview Recording </span>
+                        <audio src={recordingUri} controls className="tw-w-full tw-h-48 tw-p-2 tw-border-0 tw-text-sm focus:tw-outline-none tw-text-gray-700 tw-rounded-none tw-resize-none" />
+                    </>
+                )
+                }
                 {/* Preview Transcription in a textarea */}
                 {transcription && (
                     <>
-                        <span className='tw-ml-2 tw-text-gray-400 tw-text-sm '>Preview Transcription </span>
-                        <textarea
-                            className="tw-w-full tw-h-full tw-p-2 tw-border-0 tw-text-sm focus:tw-outline-none tw-bg-gray-50 tw-text-gray-700 tw-rounded-none tw-resize-none"
-                            value={transcription.transcription_text}
-                            rows={8}
-                            readOnly
-                        />
+                        <span className='tw-ml-2 tw-mt-2 tw-text-gray-400 tw-text-sm '>Preview Transcription </span>
+                        <p
+                            className="tw-w-full tw-h-full tw-p-2 tw-border-0 tw-text-sm focus:tw-outline-none tw-bg-gray-50 tw-text-gray-700 tw-rounded-none tw-resize-none">
+                            {transcription.transcription_text}
+                        </p>
                     </>)
                 }
-                <div className='tw-flex tw-justify-between tw-items-center tw-mx-4 tw-my-2'>
+                {autofillData && (
+                    <>
+                        <div className='tw-flex tw-justify-between tw-items-center tw-mx-4 tw-my-2'>
+                            <span className='tw-ml-2 tw-mt-2 tw-text-gray-400 tw-text-sm '>Autofill Preview:</span>
+                            <button
+                                onClick={() => {
+                                    setAutofillData();
+                                    populateFields(
+                                        transcription.id,
+                                        autofillCB
+                                    )
+                                }}
+                                className="tw-button tw-flex tw-gap-1 tw-items-center tw-space-x-4 tw-px-2 tw-py-2 tw-bg-blue-100 tw-text-blue-700 tw-rounded-xl tw-cursor-pointer"
+                            >
+                                <RetryIcon className="tw-h-6 tw-w-6 tw-flex-none tw-rounded-xl tw-cursor-pointer" />
+                                Retry
+                            </button>
+                        </div>
+                        <div className="tw-flex tw-flex-col tw-gap-2 tw-px-4 tw-my-2">
+                            {
+                                Object.keys(autofillData).map(key => (
+                                    <Badge key={key}>
+                                        <span className="tw-font-bold">{properText(key)}:</span> {autofillData[key]}
+                                    </Badge>
+                                ))
+                            }
+                        </div>
+                    </>
+                )}
+                <div className='tw-flex tw-justify-between tw-items-center tw-mx-4 tw-my-2' ref={autofillRef}>
                     {
                         transcription ? (
                             <div
                                 onClick={() => {
-                                    setRecording(false);
+                                    setRecordingObj(false);
                                     setTranscription();
                                     setAutofillData();
                                     setPlayerState("Retry")
+                                    setRecordingUri();
                                 }}
                                 className="tw-button tw-flex tw-gap-1 tw-items-center tw-space-x-4 tw-px-2 tw-py-2 tw-bg-blue-100 tw-text-blue-700 tw-rounded-xl tw-cursor-pointer"
                             >
                                 <RetryIcon className="tw-h-6 tw-w-6 tw-flex-none tw-rounded-xl tw-cursor-pointer" />
                                 Retry
                             </div>
-                        ) : recording ? (
+                        ) : recordingObj ? (
                             <div className="tw-flex tw-flex-col">
                                 <Lottie animationData={animationData} />
                                 <div className="tw-flex tw-flex-col tw-text-sm tw-text-gray-700">
@@ -262,19 +315,20 @@ export default function Home({ onHide }) {
                     }
                 </div>
                 {/* Recording Controls */}
-                {pageData &&
+                {pageData && !recordingUri &&
                     <>
                         <Player
                             controlledState={playerState}
                             onRecordingReady={(recordingBlob, duration) => {
+                                setRecordingUri(URL.createObjectURL(recordingBlob));
                                 const recordingFile = new File([recordingBlob], 'recording.wav', { type: 'audio/wav' });
-                                setRecording({
+                                setRecordingObj({
                                     file: recordingFile,
                                     duration: duration
                                 });
                             }}
                         />
-                        {!recording && <div className="tw-flex tw-justify-center tw-items-start tw-h-1/2 tw-p-4 tw-text-sm tw-text-gray-700">
+                        {!recordingObj && <div className="tw-flex tw-justify-center tw-items-start tw-h-1/2 tw-p-4 tw-text-sm tw-text-gray-700">
                             <span>
                                 Record your voice note to get started
                             </span>
@@ -287,8 +341,27 @@ export default function Home({ onHide }) {
     )
 }
 
-const Badge = ({ text }) => (
-    <span className="tw-bg-gray-100 tw-rounded-lg tw-text-gray-600 tw-text-sm tw-font-normal tw-px-2 tw-py-1">
-        {text}
+const Badge = ({ children }) => (
+    <span className="tw-bg-gray-50 tw-rounded-lg tw-text-gray-600 tw-text-sm tw-font-normal tw-px-2 tw-py-1">
+        {children}
     </span>
 );
+
+const MyTranscriptionsButton = (
+    { navigate }
+) => {
+    return (
+        <div className="tw-flex tw-justify-end tw-items-center">
+            <button
+                className="tw-flex tw-gap-px tw-items-center text-gray-700 tw-text-sm tw-w-full tw-bg-white hover:tw-bg-gray-100"
+                onClick={() => navigate('transcriptions')}
+            >
+                <span className="tw-p-1 tw-rounded-full tw-bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="tw-h-4 tw-w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 0a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18.75a8.75 8.75 0 1 1 0-17.5 8.75 8.75 0 0 1 0 17.5zm-.625-5.625h1.25v-5h-1.25v5z" clipRule="evenodd" />
+                    </svg>
+                </span>
+                My Transcriptions
+            </button>
+        </div>)
+}
