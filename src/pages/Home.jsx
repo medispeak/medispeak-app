@@ -141,7 +141,7 @@ export default function Home({ onHide, transcriptionRecord }) {
                                 This WebApp is not yet setup in your MediSpeak account
                             </span>
                             <span>
-                                You can setup {fqdn} as a WebApp at <a href="https://medispeak.in" target="_blank" rel="noreferrer" className="tw-text-blue-600 tw-underline">https://medispeak.in</a>
+                                You can setup {fqdn} as a WebApp at <a href="https://app.medispeak.in" target="_blank" rel="noreferrer" className="tw-text-blue-600 tw-underline">https://app.medispeak.in</a>
                             </span>
                         </div>
                     ) : pages ? (
@@ -152,7 +152,7 @@ export default function Home({ onHide, transcriptionRecord }) {
                                     No Pages found for this WebApp
                                 </span>
                                 <p>
-                                    You can setup <span className="tw-font-semibold">Pages</span> for the WebApp {fqdn} at <a href="https://medispeak.in" target="_blank" rel="noreferrer" className="tw-text-blue-600 tw-underline">https://medispeak.in</a>
+                                    You can setup <span className="tw-font-semibold">Pages</span> for the WebApp {fqdn} at <a href="https://app.medispeak.in" target="_blank" rel="noreferrer" className="tw-text-blue-600 tw-underline">https://app.medispeak.in</a>
                                 </p>
                             </div>
                         ) : (

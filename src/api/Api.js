@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { authAtom } from "../store/AuthStore";
 
-const BASE_URL = "https://www.medispeak.in/";
+const BASE_URL = "https://www.app.medispeak.in/";
 // const BASE_URL = "http://localhost:3000/";
 
 export function request(url, method = "GET", data) {
@@ -55,7 +55,7 @@ const requestPost = (url, data, authToken) => {
   return request(url, "POST", data, authToken);
 };
 
-// https://www.medispeak.in/api/v1/pages/5/transcriptions"
+// https://www.app.medispeak.in/api/v1/pages/5/transcriptions"
 export function transcribeAudio(data, page) {
   const url = `${BASE_URL}api/v1/pages/${page}/transcriptions`;
   return requestPost(url, data);
@@ -74,19 +74,19 @@ export function getPageInfo(page) {
 }
 
 export function findTemplate() {
-  // https://www.medispeak.in/api/v1/webapps
+  // https://www.app.medispeak.in/api/v1/webapps
   const url = `${BASE_URL}api/v1/templates/find_by_domain`;
   return request(url);
 }
 
 export function getTanscriptions(page) {
-  // https://www.medispeak.in/api/v1/transcriptions/
+  // https://www.app.medispeak.in/api/v1/transcriptions/
   const url = `${BASE_URL}api/v1/transcriptions/${page ? `?page=${page}` : ""}`;
   return request(url);
 }
 
 export function getCurrentUser() {
-  // https://www.medispeak.in/api/v1/me
+  // https://www.app.medispeak.in/api/v1/me
   const url = `${BASE_URL}api/v1/me`;
   return request(url);
 }

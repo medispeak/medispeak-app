@@ -25,7 +25,7 @@ export default function Settings() {
         }
     }, []);
 
-    // Settings Page to set "Access Key"; To be prefilled from `localStorage`; Show a hint to Sign Up at https://medispeak.in to get the Access Key
+    // Settings Page to set "Access Key"; To be prefilled from `localStorage`; Show a hint to Sign Up at https://app.medispeak.in to get the Access Key
     return (
         <div className="tw-flex tw-h-full tw-flex-col">
             {/* Title & Page Title*/}
@@ -59,7 +59,7 @@ export default function Settings() {
                     <span className="tw-text-sm tw-font-semibold tw-text-gray-800">Don't have an Access Key?</span>
                     <span className="tw-text-xs tw-font-semibold tw-text-gray-600">
                         Sign Up at{" "}
-                        <a href="https://medispeak.in" target="_blank" rel="noreferrer" className="tw-text-blue-600 tw-underline">https://medispeak.in</a>
+                        <a href="https://app.medispeak.in" target="_blank" rel="noreferrer" className="tw-text-blue-600 tw-underline">https://app.medispeak.in</a>
                         {" "}to get the Access Key
                     </span>
                 </div>
