@@ -227,7 +227,7 @@ export default function Home({ onHide, transcriptionRecord }) {
                     <>
                         <span className='tw-ml-2 tw-mt-2 tw-text-gray-400 tw-text-sm '>Preview Transcription </span>
                         <p
-                            className="tw-w-full tw-h-full tw-p-2 tw-border-0 tw-text-sm focus:tw-outline-none tw-bg-gray-50 tw-text-gray-700 tw-rounded-none tw-resize-none">
+                            className="tw-w-full tw-p-2 tw-border-0 tw-text-sm focus:tw-outline-none tw-bg-gray-50 tw-text-gray-700 tw-rounded-none tw-resize-none">
                             {transcription.transcription_text}
                         </p>
                     </>)
@@ -263,7 +263,7 @@ export default function Home({ onHide, transcriptionRecord }) {
                 )}
                 <div className='tw-flex tw-justify-between tw-items-center tw-mx-4 tw-my-2' ref={autofillRef}>
                     {
-                        transcription ? (
+                        transcription && (!transcriptionRecord) ? (
                             <div
                                 onClick={() => {
                                     setRecordingObj(false);
