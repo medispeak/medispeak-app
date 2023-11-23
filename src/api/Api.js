@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { authAtom } from "../store/AuthStore";
 
-const BASE_URL = "https://www.app.medispeak.in/";
+const BASE_URL = "https://app.medispeak.in/";
 // const BASE_URL = "http://localhost:3000/";
 
 export function request(url, method = "GET", data) {
