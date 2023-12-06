@@ -120,6 +120,13 @@ export default function Home({ onHide, transcriptionRecord }) {
         }
     }, [transcription]);
 
+    const onRetry = () => {
+        setRecordingObj(false);
+        setTranscription();
+        setAutofillData();
+        setPlayerState("Retry")
+        setRecordingUri();
+    }
 
     const title = pageData ? pageData.title : "Select Page";
 
@@ -218,7 +225,7 @@ export default function Home({ onHide, transcriptionRecord }) {
                 {recordingUri && (
                     <>
                         <span className='tw-ml-2 tw-mt-2 tw-text-gray-400 tw-text-sm '>Preview Recording </span>
-                        <audio src={recordingUri} controls className="tw-w-full tw-h-48 tw-p-2 tw-border-0 tw-text-sm focus:tw-outline-none tw-text-gray-700 tw-rounded-none tw-resize-none" />
+                        <audio src={recordingUri} controls className="tw-w-full tw-p-2 tw-border-0 tw-text-sm focus:tw-outline-none tw-text-gray-700 tw-rounded-none tw-resize-none" />
                     </>
                 )
                 }
@@ -265,13 +272,7 @@ export default function Home({ onHide, transcriptionRecord }) {
                     {
                         transcription && (!transcriptionRecord) ? (
                             <div
-                                onClick={() => {
-                                    setRecordingObj(false);
-                                    setTranscription();
-                                    setAutofillData();
-                                    setPlayerState("Retry")
-                                    setRecordingUri();
-                                }}
+                                onClick={onRetry}
                                 className="tw-button tw-flex tw-gap-1 tw-items-center tw-space-x-4 tw-px-2 tw-py-2 tw-bg-blue-100 tw-text-blue-700 tw-rounded-xl tw-cursor-pointer"
                             >
                                 <RetryIcon className="tw-h-6 tw-w-6 tw-flex-none tw-rounded-xl tw-cursor-pointer" />

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAudioRecorder } from 'react-audio-voice-recorder';
-import { MediSpeakIcon, PauseIcon, PlayIcon, RecordIcon, StopIcon } from './common/AppIcons';
+import { MediSpeakIcon, PauseIcon, PlayIcon, RecordIcon, RetryIcon, StopIcon, TranscribeIcon } from './common/AppIcons';
 import Lottie from 'lottie-react';
 import animationData from './common/animation.json'
 
@@ -41,7 +41,7 @@ export default function Player({ onRecordingReady, controlledState }) {
 
 
     useEffect(() => {
-        if (!recordingBlob) return;
+        if (!recordingBlob || recordingDuration === 0) return;
         onRecordingReady(recordingBlob, recordingDuration);
         // recordingBlob will be present at this point after 'stopRecording' has been called
         const audioSrc = URL.createObjectURL(recordingBlob);
@@ -82,22 +82,32 @@ export default function Player({ onRecordingReady, controlledState }) {
                                     <PauseIcon className="tw-h-6 tw-w-6 tw-flex-none tw-text-white tw-rounded-xl tw-cursor-pointer hover:tw-text-gray-100" />
                                 </button>
                             ) : (
-                                <div className="tw-flex tw-justify-center tw-gap-2 tw-text-sm tw-text-white">
+                                <div className="tw-flex tw-justify-center tw-gap-2 tw-text-sm tw-text-white tw-flex-wrap">
+                                    <button onClick={() => {
+                                        setRecordingDuration(0);
+                                        setAudioSrc(null);
+                                        stopRecording();
+                                    }}
+                                        className="tw-flex tw-rounded-full tw-bg-red-100 tw-text-red-600 tw-p-2 tw-px-3 tw-text-sm tw-justify-center tw-items-center">
+                                        <RetryIcon className='h-4 w-4 mr-1' />
+                                        Restart
+                                    </button>
                                     <button onClick={togglePauseResumeHook} className="tw-bg-blue-700 tw-rounded-full tw-p-2 tw-px-3">
                                         Resume
                                     </button>
                                     <button onClick={
                                         () => {
-                                            setRecordingDuration(recordingTime);
                                             stopRecording();
+                                            setRecordingDuration(recordingTime);
                                         }
-                                    } className="tw-bg-blue-100 tw-rounded-full tw-p-2 tw-px-3 tw-text-blue-700">
-                                        Start Transcribing
+                                    } className="tw-flex tw-items-center tw-bg-blue-100 tw-rounded-full tw-p-2 tw-px-3 tw-text-blue-700">
+                                        <TranscribeIcon className='h-4 w-4 mr-1' />
+                                        Transcribe
                                     </button>
                                 </div>
                             )
                         }
-                    </div >);
+                    </div>);
             case 'Done':
                 return '';
             default:
