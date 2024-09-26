@@ -1,0 +1,3 @@
+Medispeak is a Utility built in ReactJS that can either be used as a Chrome Extension, or be injected to any website, to enable Context based Voice Autofill for their forms. Medispeak is meant to work with Any EMR System in  the world.
+
+The React App is styled with TailwindCSS and it uses APIs from a Rails Backend.
