@@ -43,15 +43,13 @@ Medispeak is a powerful utility built in ReactJS that enables context-based voic
    - Enable "Developer mode"
    - Click "Load unpacked" and select the `build` directory
 
-5. For website injection:
-   - Include the built JavaScript file in your HTML:
-     ```html
-     <script src="path/to/medispeak.js"></script>
-     ```
-
 ## Usage
 
-[Provide instructions on how to use Medispeak, including any necessary setup or configuration steps]
+For website injection:
+   - Include the built JavaScript file in your HTML:
+     ```html
+<script src="https://medispeak-app.pages.dev/assets/index.html.js" crossorigin="" type="module"></script>
+     ```
 
 ## Development
 
