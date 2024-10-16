@@ -4,8 +4,8 @@ import { authAtom } from "../store/AuthStore";
 const BASE_URL = "https://app.medispeak.in/";
 // const BASE_URL = "http://localhost:3000/";
 
-export function request(url, method = "GET", data) {
-  const authToken = sessionStorage.getItem("access_token");
+export function request(url, method = "GET", data, token) {
+  const authToken = token ?? sessionStorage.getItem("access_token");
   const formData = new FormData();
   if (data) {
     data.forEach((field) => {
@@ -30,9 +30,9 @@ export function request(url, method = "GET", data) {
     method === "GET"
       ? baseRequestOptions
       : {
-          ...baseRequestOptions,
-          body: formData,
-        };
+        ...baseRequestOptions,
+        body: formData,
+      };
 
   return fetch(url, requestOptions).then((response) =>
     response
@@ -56,9 +56,9 @@ const requestPost = (url, data, authToken) => {
 };
 
 // https://www.app.medispeak.in/api/v1/pages/5/transcriptions"
-export function transcribeAudio(data, page) {
+export function transcribeAudio(data, page, token) {
   const url = `${BASE_URL}api/v1/pages/${page}/transcriptions`;
-  return requestPost(url, data);
+  return requestPost(url, data, token);
 }
 
 // /api/v1/transcriptions/16/generate_completion
@@ -90,3 +90,36 @@ export function getCurrentUser() {
   const url = `${BASE_URL}api/v1/me`;
   return request(url);
 }
+
+// API Utils Start
+
+export const prepareRecording = (recordingBlob, duration) => {
+  const recordingFile = new File(
+    [recordingBlob],
+    "recording.wav",
+    { type: "audio/wav" }
+  );
+  return {
+    file: recordingFile,
+    duration: duration,
+  }
+}
+
+export const uploadAudio = (recording, pageId, callback, token) => {
+  const page = pageId;
+  transcribeAudio(
+    [
+      { name: "transcription[audio_file]", value: recording.file },
+      { name: "transcription[duration]", value: recording.duration },
+    ],
+    page,
+    token
+  )
+    .then((result) => {
+      console.log(result);
+      if (callback) callback(result);
+    })
+    .catch((error) => console.log("error", error));
+};
+
+// API Utils End

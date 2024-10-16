@@ -89,9 +89,9 @@ export default function Transcriptions() {
                         {flatTranscriptions.map((transcription) => (
                             <div key={transcription.id} className="tw-flex tw-mb-2 tw-items-center tw-justify-between tw-p-4 tw-bg-white tw-rounded-lg tw-shadow-md">
                                 <div className="tw-flex tw-items-center tw-gap-4">
-                                    <button onClick={() => setSelectedTranscription(transcription)}>
+                                    <div onClick={() => setSelectedTranscription(transcription)}>
                                         <PlayIcon className="tw-h-6 tw-w-6 tw-text-gray-400" />
-                                    </button>
+                                    </div>
                                     <div className="tw-flex tw-flex-col">
                                         <div className="tw-text-sm tw-font-medium tw-text-gray-900">{transcription.title}</div>
                                         <div className="tw-text-sm tw-text-gray-500" title={transcription.created_at}>{relativeTime(transcription.created_at)}</div>
@@ -103,9 +103,9 @@ export default function Transcriptions() {
                         <span className="tw-text-sm tw-text-gray-500">{flatTranscriptions.length} Items in Page {page}</span>
                         {hasMore ? (
                             <div className="tw-flex tw-justify-center tw-mx-4">
-                                <button onClick={loadMore} className=" tw-my-4 tw-text-sm tw-text-gray-500 tw-font-medium tw-py-2 tw-px-4 tw-border tw-border-gray-300 tw-rounded-md tw-shadow-sm tw-bg-white hover:tw-bg-gray-50 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-offset-2 focus:tw-ring-indigo-500">
+                                <div onClick={loadMore} className=" tw-my-4 tw-text-sm tw-text-gray-500 tw-font-medium tw-py-2 tw-px-4 tw-border tw-border-gray-300 tw-rounded-md tw-shadow-sm tw-bg-white hover:tw-bg-gray-50 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-offset-2 focus:tw-ring-indigo-500">
                                     More
-                                </button>
+                                </div>
                             </div>
                         ) : (
                             <div className="tw-text-sm tw-text-gray-500">No more transcriptions</div>

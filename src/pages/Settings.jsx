@@ -34,9 +34,9 @@ export default function Settings() {
                 <span className="tw-text-base tw-font-bold tw-blue-800">Settings</span>
                 <span className="tw-text-sm tw-font-semibold tw-flex tw-gap-2 tw-items-center">
                     MediSpeak
-                    <button onClick={() => navigate('home')}>
+                    <div onClick={() => navigate('home')}>
                         <ExitIcon className="tw-h-4 tw-w-4 tw-flex-none tw-rounded-xl tw-cursor-pointer" />
-                    </button>
+                    </div>
                 </span>
             </div>
 
@@ -65,11 +65,11 @@ export default function Settings() {
                 </div>
             </div>
             <div className="tw-flex tw-justify-center tw-items-center tw-mx-4 tw-my-2">
-                <button
+                <div
                     onClick={() => saveAccessKey(accessKey, refresh)}
                     className="tw-bg-blue-600 tw-text-white tw-rounded-lg tw-py-2 tw-px-4 tw-text-sm tw-font-semibold">
                     Save
-                </button>
+                </div>
             </div>
         </div>
 
