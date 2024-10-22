@@ -1,25 +1,28 @@
 {
-    "manifest_version": 3,
-    "name": "medispeak-crx",
-    "version": "1.0.0",
-    "action": {
-        "default_popup": "index.html"
-    },
-    "permissions": [
-        "tabs",
-        "storage"
-    ],
-    "background": {
-        "service_worker": "src/service-worker.js"
-    },
-    "content_scripts": [
-        {
-            "js": [
-                "src/content.jsx"
-            ],
-            "matches": [
-                "<all_urls>"
-            ]
-        }
-    ]
+  "manifest_version": 3,
+  "name": "medispeak-crx",
+  "version": "1.0.0",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": ["tabs", "storage"],
+  "background": {
+    "service_worker": "src/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "js": ["src/content.jsx"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/content.jsx.js",
+        "assets/content.jsx-loader.js",
+        "assets/App.js"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
