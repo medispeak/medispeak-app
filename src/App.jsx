@@ -5,7 +5,6 @@ import ErrorBoundary from "./components/common/ErrorBoundary";
 import AppContainer from "./components/AppContainer";
 
 import AudioRecorder from "audio-recorder-polyfill";
-import { notify } from "./store/notifications";
 window.MediaRecorder = AudioRecorder;
 
 function App() {
@@ -38,10 +37,6 @@ function App() {
             <div
               className="tw-button tw-bg-blue-600 tw-relative tw-rounded-full tw-transition tw-w-14 tw-h-14 md:t-w-16 md:t-h-16 tw-my-2 md:t-my-3 tw-mx-2 tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-shadow-xl tw-text-white"
               onClick={() => {
-                notify({
-                  title: "Hello",
-                  message: "World",
-                });
                 setShowPopOver(!showPopOver);
               }}
             >
