@@ -1,5 +1,6 @@
 import { useAtom } from "jotai";
 import { authAtom } from "../store/AuthStore";
+import { notify } from "../store/notifications";
 
 const BASE_URL = "https://app.medispeak.in/";
 // const BASE_URL = "http://localhost:3000/";
@@ -40,6 +41,11 @@ export function request(url, method = "GET", data) {
       .then((data) => {
         if (!response.ok) {
           const error = (data && data.message) || response.statusText;
+          notify({
+            type: "error",
+            title: "Something went wrong",
+            message: error,
+          });
           return Promise.reject({ status: response.status, message: error });
         }
         return data;
