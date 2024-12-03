@@ -17,11 +17,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "assets/content.jsx.js",
-        "assets/content.jsx-loader.js",
-        "assets/App.js"
-      ],
+      "resources": ["src/content.jsx", "src/App.jsx"],
       "matches": ["<all_urls>"]
     }
   ]
