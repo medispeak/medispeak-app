@@ -301,11 +301,15 @@ export default function Home({ onHide, transcriptionRecord }) {
               {Object.keys(autofillData).map((key) => (
                 <Badge key={key}>
                   <span className="tw-font-bold">
-                    {properText(
-                      pageData?.form_fields?.find(
-                        (field) => field.title === key
-                      )?.friendly_name ?? key
-                    )}
+                    {
+                      // If the field has a friendly name, use it, else use the title
+                      // TODO: refactor autofillData to have friendly_name along with the key
+                      properText(
+                        pageData?.form_fields?.find(
+                          (field) => field.title === key
+                        )?.friendly_name ?? key
+                      )
+                    }
                     :
                   </span>{" "}
                   {autofillData[key]}
