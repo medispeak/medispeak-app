@@ -300,7 +300,14 @@ export default function Home({ onHide, transcriptionRecord }) {
             <div className="tw-flex tw-flex-col tw-gap-2 tw-px-4 tw-my-2">
               {Object.keys(autofillData).map((key) => (
                 <Badge key={key}>
-                  <span className="tw-font-bold">{properText(key)}:</span>{" "}
+                  <span className="tw-font-bold">
+                    {properText(
+                      pageData?.form_fields?.find(
+                        (field) => field.title === key
+                      )?.friendly_name ?? key
+                    )}
+                    :
+                  </span>{" "}
                   {autofillData[key]}
                 </Badge>
               ))}
