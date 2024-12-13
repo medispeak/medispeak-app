@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { MediSpeakIcon } from "./components/common/AppIcons";
 import AppRouter from "./pages/AppRouter";
 import ErrorBoundary from "./components/common/ErrorBoundary";
-import AppContainer from "./components/AppContainer";
 
 import AudioRecorder from "audio-recorder-polyfill";
 window.MediaRecorder = AudioRecorder;
