@@ -8,6 +8,10 @@ export default defineConfig({
   plugins: [react(), crx({ manifest })],
   build: {
     rollupOptions: {
+      input: {
+        main: "./src/main.jsx",
+        tab: "./src/tab.jsx",
+      },
       output: {
         entryFileNames: `assets/[name].js`,
         chunkFileNames: `assets/[name].js`,

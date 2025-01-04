@@ -221,6 +221,16 @@ const updateRadio = (field, value, metadata, delay) => {
     );
 };
 
+// 7. Button: Find the button with the given text as `title`;
+//    Click the button;
+const updateButton = (field, value, metadata, delay) => {
+  console.log("updateButton called with field:", field, "value:", value);
+  const button = document.querySelector(`button[title="${value}"]`);
+  if (button) {
+    button.click();
+  }
+};
+
 export const triggerUpdateFields = (updateFields) => {
   const recursiveScan = (field) => {
     console.log("recursiveScan", field);
@@ -283,6 +293,9 @@ export const triggerUpdateFields = (updateFields) => {
           break;
         case "radio":
           updateRadio(field, field.value, field.metadata, 0);
+          break;
+        case "button":
+          updateButton(field, field.value, field.metadata, 0);
           break;
         default:
           console.log(

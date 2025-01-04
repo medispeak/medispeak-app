@@ -10,7 +10,12 @@ import {
 import Player from "../components/Player";
 import { triggerUpdateFields } from "../utils/ScanUtils";
 
-import { getCompletion, findTemplate, uploadAudio } from "../api/Api";
+import {
+  transcribeAudio,
+  getCompletion,
+  findTemplate,
+  uploadAudio
+} from "../api/Api";
 import { useRoute } from "./AppRouter";
 
 import Lottie from "lottie-react";
@@ -21,6 +26,22 @@ const properText = (text) =>
     .split("_")
     .map((word) => word[0].toUpperCase() + word.slice(1))
     .join(" ");
+
+const uploadAudio = (recording, pageId, callback) => {
+  const page = pageId;
+  transcribeAudio(
+    [
+      { name: "transcription[audio_file]", value: recording.file },
+      { name: "transcription[duration]", value: recording.duration },
+    ],
+    page
+  )
+    .then((result) => {
+      console.log(result);
+      if (callback) callback(result);
+    })
+    .catch((error) => console.log("error", error));
+};
 
 const populateFields = (transcription, callback) => {
   getCompletion(transcription)
@@ -219,7 +240,9 @@ export default function Home({ onHide, transcriptionRecord }) {
             {/* Autofilled Fields */}
             <div className="tw-px-4 tw-flex tw-flex-wrap tw-flex-shrink tw-gap-2 tw-items-start tw-max-h-48 tw-overflow-auto">
               {pageData?.form_fields?.map((field) => (
-                <Badge key={field.title}>{properText(field.title)}</Badge>
+                <Badge key={field.title}>
+                  {properText(field.friendly_name ?? field.title)}
+                </Badge>
               )) || (
                 <span className="tw-text-sm tw-font-semibold tw-mx-4 tw-my-2 tw-text-gray-800">
                   No fields found
@@ -262,7 +285,7 @@ export default function Home({ onHide, transcriptionRecord }) {
               <span className="tw-ml-2 tw-mt-2 tw-text-gray-400 tw-text-sm ">
                 Autofill Preview:
               </span>
-              <div
+              <button
                 onClick={() => {
                   setAutofillData();
                   populateFields(transcription.id, autofillCB);
@@ -271,12 +294,23 @@ export default function Home({ onHide, transcriptionRecord }) {
               >
                 <RetryIcon className="tw-h-6 tw-w-6 tw-flex-none tw-rounded-xl tw-cursor-pointer" />
                 Retry
-              </div>
+              </button>
             </div>
             <div className="tw-flex tw-flex-col tw-gap-2 tw-px-4 tw-my-2">
               {Object.keys(autofillData).map((key) => (
                 <Badge key={key}>
-                  <span className="tw-font-bold">{properText(key)}:</span>{" "}
+                  <span className="tw-font-bold">
+                    {
+                      // If the field has a friendly name, use it, else use the title
+                      // TODO: refactor autofillData to have friendly_name along with the key
+                      properText(
+                        pageData?.form_fields?.find(
+                          (field) => field.title === key
+                        )?.friendly_name ?? key
+                      )
+                    }
+                    :
+                  </span>{" "}
                   {autofillData[key]}
                 </Badge>
               ))}
@@ -350,6 +384,7 @@ export default function Home({ onHide, transcriptionRecord }) {
           <>
             <Player
               controlledState={playerState}
+<<<<<<< HEAD
               onRecordingReadyCB={(recordingBlob, duration) => {
                 setRecordingUri(URL.createObjectURL(recordingBlob));
                 setRecordingObj(prepareRecording(recordingBlob, duration));
@@ -371,6 +406,19 @@ export default function Home({ onHide, transcriptionRecord }) {
                   console.log("Removing Listener for medispeak.recordingLive");
                   chrome.runtime.onMessage.removeListener(onMessageListener);
                 };
+=======
+              onRecordingReady={(recordingBlob, duration) => {
+                setRecordingUri(URL.createObjectURL(recordingBlob));
+                const recordingFile = new File(
+                  [recordingBlob],
+                  "recording.wav",
+                  { type: "audio/wav" }
+                );
+                setRecordingObj({
+                  file: recordingFile,
+                  duration: duration,
+                });
+>>>>>>> main
               }}
             />
             {!recordingObj && (
@@ -394,7 +442,11 @@ const Badge = ({ children }) => (
 const MyTranscriptionsButton = ({ navigate }) => {
   return (
     <div className="tw-flex tw-justify-end tw-items-center">
+<<<<<<< HEAD
       <div
+=======
+      <button
+>>>>>>> main
         className="tw-flex tw-gap-px tw-items-center text-gray-700 tw-text-sm tw-w-full tw-bg-white hover:tw-bg-gray-100"
         onClick={() => navigate("transcriptions")}
       >
@@ -413,7 +465,11 @@ const MyTranscriptionsButton = ({ navigate }) => {
           </svg>
         </span>
         My Transcriptions
+<<<<<<< HEAD
       </div>
+=======
+      </button>
+>>>>>>> main
     </div>
   );
 };
